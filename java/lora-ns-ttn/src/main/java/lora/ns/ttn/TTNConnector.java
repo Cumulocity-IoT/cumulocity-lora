@@ -358,6 +358,7 @@ public class TTNConnector extends LNSAbstractConnector {
                                 GatewayConnectionStats stats = gatewayServer
                                                 .getGatewayConnectionStats(g.getIds());
                                 // logger.info("Gateway status: {}", stats.toString());
+                                connected = stats.hasConnectedAt();
                         } catch (StatusRuntimeException e) {
                                 // e.printStackTrace();
                                 connected = false;
