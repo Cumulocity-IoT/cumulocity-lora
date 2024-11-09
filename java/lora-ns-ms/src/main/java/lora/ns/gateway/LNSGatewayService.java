@@ -103,7 +103,7 @@ public class LNSGatewayService {
     }
 
     private ManagedObjectRepresentation createGateway(String lnsConnectorId, Gateway gateway) {
-        loraContextService.log("Creating gateway {}", gateway.getName());
+        loraContextService.log("Creating gateway {} ({})", gateway.getName(), gateway.getGwEUI());
         ManagedObjectRepresentation mor = new ManagedObjectRepresentation();
         mor.setName(gateway.getName());
         mor.set(new LoRaGateway());
@@ -113,7 +113,7 @@ public class LNSGatewayService {
         mor.set(hardware);
         mor.set(new IsDevice());
         mor = inventoryApi.create(mor);
-        c8yUtils.createExternalId(mor, gateway.getGwEUI(), GATEWAY_ID_TYPE);
+        c8yUtils.createExternalIdOrDeleteMor(mor, gateway.getGwEUI(), GATEWAY_ID_TYPE);
         return mor;
     }
 

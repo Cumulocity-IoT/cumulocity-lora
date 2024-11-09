@@ -6,16 +6,13 @@ import java.util.Optional;
 
 import org.apache.commons.codec.binary.Hex;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.microservice.subscription.model.MicroserviceSubscriptionAddedEvent;
 import com.cumulocity.microservice.subscription.service.MicroserviceSubscriptionsService;
 import com.cumulocity.model.ID;
-import c8y.Configuration;
 import com.cumulocity.model.event.CumulocitySeverities;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
@@ -31,7 +28,9 @@ import com.cumulocity.sdk.client.inventory.InventoryFilter;
 import com.cumulocity.sdk.client.inventory.ManagedObjectCollection;
 
 import c8y.Command;
+import c8y.Configuration;
 import c8y.Hardware;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lora.codec.DeviceCodecRepresentation;
 import lora.codec.Result;
@@ -44,44 +43,23 @@ import lora.ns.DeviceData;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CodecManager {
 
-	/**
-	 *
-	 */
 	private static final String PROPERTY_PROCESSED = "processed";
-
-	/**
-	 *
-	 */
 	private static final String PROPERTY_CODEC = "codec";
-
 	private static final String PROPERTY_STATUS = "status";
-
 	private static final String VALUE_PROCESSED = "processed";
-
 	private static final String VALUE_UNPROCESSED = "unprocessed";
-
-	@Autowired
-	private EventApi eventApi;
-
-	@Autowired
-	private InventoryApi inventoryApi;
-
-	@Autowired
-	private IdentityApi identityApi;
-
-	@Autowired
-	private AlarmApi alarmApi;
-
-	@Autowired
-	private MicroserviceSubscriptionsService subscriptionsService;
-
-	@Autowired
-	protected ContextService<MicroserviceCredentials> contextService;
-
 	private static final String LORA_DEVICE_COMMAND_ERROR = "LoRa device command error";
 	private static final String LORA_DEVICE_PAYLOAD_ERROR = "LoRa device payload decoding error";
+
+	private final EventApi eventApi;
+	private final InventoryApi inventoryApi;
+	private final IdentityApi identityApi;
+	private final AlarmApi alarmApi;
+	private final MicroserviceSubscriptionsService subscriptionsService;
+	private final C8YUtils c8yUtils;
 
 	private Map<String, CodecProxy> codecInstances = new HashMap<>();
 
@@ -167,18 +145,6 @@ public class CodecManager {
 		return result;
 	}
 
-	private MicroserviceCredentials createContextWithoutApiKey(MicroserviceCredentials source) {
-		return new MicroserviceCredentials(
-				source.getTenant(),
-				source.getUsername(),
-				source.getPassword(),
-				source.getOAuthAccessToken(),
-				"NOT_EXISTING", // added to replace context, check:
-								// com.cumulocity.microservice.context.annotation.EnableContextSupportConfiguration.contextScopeConfigurer
-				source.getTfaToken(),
-				null);
-	}
-
 	public void decode(ManagedObjectRepresentation mor, DeviceData event) {
 		EventRepresentation eventRepresentation = new EventRepresentation();
 		eventRepresentation.setSource(mor);
@@ -209,8 +175,7 @@ public class CodecManager {
 				alarmApi.create(alarm);
 			}
 		});
-		MicroserviceCredentials noAppKeyContext = createContextWithoutApiKey(contextService.getContext());
-		contextService.callWithinContext(noAppKeyContext, () -> eventApi.create(eventRepresentation));
+		c8yUtils.callWithoutAppContext(() -> eventApi.create(eventRepresentation));
 	}
 
 	public DownlinkData encode(String devEui, OperationRepresentation operation) {
