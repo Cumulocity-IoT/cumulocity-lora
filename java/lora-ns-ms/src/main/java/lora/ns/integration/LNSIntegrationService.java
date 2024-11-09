@@ -54,6 +54,7 @@ import com.cumulocity.sdk.client.measurement.MeasurementApi;
 import com.cumulocity.sdk.client.option.TenantOptionApi;
 
 import c8y.IsDevice;
+import c8y.RequiredAvailability;
 import lombok.extern.slf4j.Slf4j;
 import lora.codec.uplink.C8YData;
 import lora.common.C8YUtils;
@@ -164,7 +165,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 	protected I getInstance(ManagedObjectRepresentation instance) {
 		@SuppressWarnings("unchecked")
 		Class<I> instanceType = (Class<I>) ((ParameterizedType) getClass().getGenericSuperclass())
-						.getActualTypeArguments()[0];
+				.getActualTypeArguments()[0];
 		I result = null;
 		AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
 		try {
@@ -172,7 +173,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			beanFactory.autowireBean(result);
 			beanFactory.initializeBean(result, "connector-" + result.getId());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-						| NoSuchMethodException | SecurityException e) {
+				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 
@@ -189,7 +190,8 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 		InventoryFilter filter = new InventoryFilter().byType(LNS_CONNECTOR_TYPE);
 		ManagedObjectCollection col = inventoryApi.getManagedObjectsByFilter(filter);
 		QueryParam queryParam = new QueryParam(() -> "query", URLEncoder.encode(
-							LNS_TYPE + " eq " + this.getType() + " and type eq '" + LNS_CONNECTOR_TYPE + "'", StandardCharsets.UTF_8));
+				LNS_TYPE + " eq " + this.getType() + " and type eq '" + LNS_CONNECTOR_TYPE + "'",
+				StandardCharsets.UTF_8));
 		for (ManagedObjectRepresentation mor : col.get(queryParam).allPages()) {
 			try {
 				initializeConnector(mor, event.getCredentials());
@@ -236,7 +238,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 				throw new UplinkProcessingException("Could not process uplink " + event, e);
 			}
 		}
-		eventApi.create(event);
+		c8yUtils.callWithoutAppContext(() -> eventApi.create(event));
 	}
 
 	public void updateOperation(String event, String lnsInstanceId) {
@@ -244,7 +246,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			OperationData data = processDownlinkEvent(event);
 			if (data.getStatus() != OperationStatus.FAILED) {
 				OperationRepresentation operation = lnsOperationManager.retrieveOperation(lnsInstanceId,
-								data.getCommandId());
+						data.getCommandId());
 				if (operation != null) {
 					operation.setStatus(data.getStatus().toString());
 					deviceControlApi.update(operation);
@@ -257,7 +259,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			} else {
 				if (data.getCommandId() != null) {
 					OperationRepresentation operation = lnsOperationManager.retrieveOperation(lnsInstanceId,
-									data.getCommandId());
+							data.getCommandId());
 					if (operation != null) {
 						operation.setStatus(OperationStatus.FAILED.toString());
 						operation.setFailureReason(data.getErrorMessage());
@@ -284,7 +286,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 		try {
 			connector.removeRoutings();
 			connector.configureRoutings(url, subscriptionsService.getTenant(), credentials.getUsername(),
-							credentials.getPassword());
+					credentials.getPassword());
 		} catch (Exception e) {
 			throw new CannotCreateRouteException("Cannot create route for url " + url, e);
 		}
@@ -305,6 +307,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 		mor.setProperty(LNS_TYPE, this.getType());
 		mor.set(new IsDevice());
 		mor.set(new Agent());
+		mor.set(new RequiredAvailability(60));
 		mor = inventoryApi.create(mor);
 
 		ManagedObject agentApi = inventoryApi.getManagedObjectApi(agentService.getAgent().getId());
@@ -312,7 +315,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 
 		LNSConnector instance = getInstance(mor);
 
-        Properties allProperties = new Properties();
+		Properties allProperties = new Properties();
 		allProperties.putAll(instance.getInitProperties());
 		allProperties.putAll(connectorRepresentation.getProperties());
 		instance.setProperties(allProperties);
@@ -332,9 +335,8 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 
 		lnsConnectorManager.addConnector(instance);
 		Optional<MicroserviceCredentials> credentials = subscriptionsService
-						.getCredentials(subscriptionsService.getTenant());
-        credentials.ifPresent(microserviceCredentials ->
-				configureRoutings(instance.getId(), microserviceCredentials));
+				.getCredentials(subscriptionsService.getTenant());
+		credentials.ifPresent(microserviceCredentials -> configureRoutings(instance.getId(), microserviceCredentials));
 
 		lnsGatewayManager.upsertGateways(instance);
 
@@ -388,7 +390,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 				connectors.values().forEach(c -> {
 					if (c.hasGatewayManagementCapability()) {
 						loraContextService.log("Scanning gateways in tenant {} with connector {}",
-										subscriptionsService.getTenant(), c.getName());
+								subscriptionsService.getTenant(), c.getName());
 						lnsGatewayManager.upsertGateways(c);
 					}
 				});
@@ -402,17 +404,17 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			String currentTenant = subscriptionsService.getTenant();
 			lnsConnectorManager.getConnectors().values().forEach(connector -> {
 				log.info("Checking pending operations in tenant {} for connector {}", subscriptionsService.getTenant(),
-								connector.getName());
+						connector.getName());
 				OperationCollection oc = deviceControlApi.getOperationsByFilter(
-								new OperationFilter().byStatus(OperationStatus.PENDING).byAgent(connector.getId()));
+						new OperationFilter().byStatus(OperationStatus.PENDING).byAgent(connector.getId()));
 				if (oc != null) {
 					for (OperationCollectionRepresentation opCollectionRepresentation = oc
-									.get(); opCollectionRepresentation != null
-													&& !opCollectionRepresentation.getOperations()
-																	.isEmpty(); opCollectionRepresentation = oc
-																					.getNextPage(opCollectionRepresentation)) {
+							.get(); opCollectionRepresentation != null
+									&& !opCollectionRepresentation.getOperations()
+											.isEmpty(); opCollectionRepresentation = oc
+													.getNextPage(opCollectionRepresentation)) {
 						loraContextService.log("Processing pending operations on tenant {} - page {}", currentTenant,
-										oc.get().getPageStatistics().getCurrentPage());
+								oc.get().getPageStatistics().getCurrentPage());
 						for (OperationRepresentation op : opCollectionRepresentation.getOperations()) {
 							lnsOperationManager.executePending(op);
 						}
@@ -430,11 +432,11 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			String memoryFragment = "Memory";
 			String bytesUnit = "bytes";
 			c8yData.addMeasurement(agentService.getAgent(), memoryFragment, "Max Memory", bytesUnit,
-							BigDecimal.valueOf(Runtime.getRuntime().maxMemory()), now);
+					BigDecimal.valueOf(Runtime.getRuntime().maxMemory()), now);
 			c8yData.addMeasurement(agentService.getAgent(), memoryFragment, "Free Memory", bytesUnit,
-							BigDecimal.valueOf(Runtime.getRuntime().freeMemory()), now);
+					BigDecimal.valueOf(Runtime.getRuntime().freeMemory()), now);
 			c8yData.addMeasurement(agentService.getAgent(), memoryFragment, "Total Memory", bytesUnit,
-							BigDecimal.valueOf(Runtime.getRuntime().totalMemory()), now);
+					BigDecimal.valueOf(Runtime.getRuntime().totalMemory()), now);
 			for (MeasurementRepresentation m : c8yData.getMeasurements()) {
 				measurementApi.create(m);
 			}
