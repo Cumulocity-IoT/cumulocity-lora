@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.cumulocity.model.event.CumulocitySeverities;
+import com.cumulocity.sdk.client.SDKException;
 
 import feign.FeignException;
 import feign.FeignException.FeignClientException;
@@ -31,7 +32,7 @@ public class LoraExceptionHandler {
         StringWriter detailedMessage = new StringWriter();
         e.printStackTrace(new PrintWriter(detailedMessage));
         return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(FeignClientException.class)
@@ -41,7 +42,7 @@ public class LoraExceptionHandler {
         StringWriter detailedMessage = new StringWriter();
         e.printStackTrace(new PrintWriter(detailedMessage));
         return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
-                        HttpStatus.resolve(e.status()));
+                HttpStatus.resolve(e.status()));
     }
 
     @ExceptionHandler(FeignException.class)
@@ -51,6 +52,16 @@ public class LoraExceptionHandler {
         StringWriter detailedMessage = new StringWriter();
         e.printStackTrace(new PrintWriter(detailedMessage));
         return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
-                        HttpStatus.resolve(e.status()));
+                HttpStatus.resolve(e.status()));
+    }
+
+    @ExceptionHandler(SDKException.class)
+    ResponseEntity<LoraError> processC8YSDKException(SDKException e) {
+        loraContextService.error(e.getMessage(), e);
+        loraContextService.sendAlarm(e.getClass().getSimpleName(), e.getMessage(), CumulocitySeverities.CRITICAL);
+        StringWriter detailedMessage = new StringWriter();
+        e.printStackTrace(new PrintWriter(detailedMessage));
+        return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
+                HttpStatus.resolve(e.getHttpStatus()));
     }
 }
