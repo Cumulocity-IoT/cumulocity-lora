@@ -1,22 +1,32 @@
 package lora.ns.ttn;
 
+import java.math.BigDecimal;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLException;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 
 import com.cumulocity.microservice.subscription.service.MicroserviceSubscriptionsService;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 
 import c8y.ConnectionState;
 import io.grpc.ManagedChannel;
@@ -354,21 +364,39 @@ public class TTNConnector extends LNSAbstractConnector {
                 return gateways.getGatewaysList().stream().map(g -> {
                         // logger.info("Retrieved gateway: {}", g.toString());
                         boolean connected = true;
+                        Map<String, Object> properties = new HashMap<>();
+                        var c8yData = new C8YData();
                         try {
                                 GatewayConnectionStats stats = gatewayServer
                                                 .getGatewayConnectionStats(g.getIds());
                                 // logger.info("Gateway status: {}", stats.toString());
                                 connected = stats.hasConnectedAt();
+                                String statsJson = JsonFormat.printer().print(stats);
+                                var objectMapper = new ObjectMapper();
+                                properties.put("stats", objectMapper.readValue(statsJson, Map.class));
+                                if (stats.hasLastUplinkReceivedAt()) {
+                                        c8yData.addMeasurement(null, "uplink", "count", "",
+                                                        BigDecimal.valueOf(stats.getUplinkCount()), DateTime.now());
+                                }
+                                if (stats.hasLastDownlinkReceivedAt()) {
+                                        c8yData.addMeasurement(null, "downlink", "count", "",
+                                                        BigDecimal.valueOf(stats.getDownlinkCount()), DateTime.now());
+                                }
                         } catch (StatusRuntimeException e) {
-                                // e.printStackTrace();
                                 connected = false;
+                        } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                                e.printStackTrace();
+                        } catch (JsonProcessingException e) {
+                                e.printStackTrace();
                         }
                         return new Gateway(g.getIds().getGatewayId(), g.getIds().getGatewayId(),
                                         g.getName(),
                                         null, null, g.getVersionIds().getBrandId(),
                                         connected ? ConnectionState.AVAILABLE
                                                         : ConnectionState.UNAVAILABLE,
-                                        new C8YData());
+                                        c8yData, properties);
                 }).collect(Collectors.toList());
         }
 

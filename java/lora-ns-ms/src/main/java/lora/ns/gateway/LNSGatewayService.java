@@ -1,5 +1,6 @@
 package lora.ns.gateway;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +64,7 @@ public class LNSGatewayService {
     }
 
     public void upsertGateways(LNSConnector connector) {
+        log.info("Upserting gateways in connector {}", connector.getName());
         List<Gateway> gateways = connector.getGateways();
         for (Gateway gateway : gateways) {
             var gw = getGateway(gateway.getGwEUI());
@@ -72,6 +74,7 @@ public class LNSGatewayService {
             } else {
                 mor.setId(gw.getId());
             }
+            mor.setProperty("gatewayProperties", gateway.getProperties());
             mor.setProperty("gatewayAvailability", gateway.getStatus());
             if (gateway.getLat() != null && gateway.getLng() != null) {
                 loraContextService.log("Updating position of gateway {}: {}, {}", gateway.getName(), gateway.getLat(),
@@ -122,7 +125,7 @@ public class LNSGatewayService {
                 new Gateway(gatewayProvisioning.getGwEUI(), gatewayProvisioning.getSerial(),
                         gatewayProvisioning.getName(), gatewayProvisioning.getLat(),
                         gatewayProvisioning.getLng(), gatewayProvisioning.getType(),
-                        gatewayProvisioning.getStatus(), null));
+                        gatewayProvisioning.getStatus(), new C8YData(), new HashMap<>()));
     }
 
     public ManagedObjectRepresentation getGateway(String id) {
