@@ -3,6 +3,7 @@ package lora.ns.objenious;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,20 +60,20 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 	}
 
 	private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JodaModule())
-					.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-					.configure(SerializationFeature.INDENT_OUTPUT, true).setSerializationInclusion(Include.NON_NULL);
+			.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+			.configure(SerializationFeature.INDENT_OUTPUT, true).setSerializationInclusion(Include.NON_NULL);
 
 	@Override
 	protected void init() {
 		final ch.qos.logback.classic.Logger serviceLogger = (ch.qos.logback.classic.Logger) LoggerFactory
-						.getLogger("lora.ns.objenious");
+				.getLogger("lora.ns.objenious");
 		serviceLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 		var feignBuilder = Feign.builder().decoder(new JacksonDecoder(objectMapper))
-						.encoder(new JacksonEncoder(objectMapper)).logger(new Slf4jLogger("lora.ns.objenious"))
-						.logLevel(Level.FULL)
-						.requestInterceptor(template -> template.headers(Map.of("apikey",
-										List.of(properties.getProperty("apikey")), "Content-Type",
-										List.of("application/json"), "Accept", List.of("application/json"))));
+				.encoder(new JacksonEncoder(objectMapper)).logger(new Slf4jLogger("lora.ns.objenious"))
+				.logLevel(Level.FULL)
+				.requestInterceptor(template -> template.headers(Map.of("apikey",
+						List.of(properties.getProperty("apikey")), "Content-Type",
+						List.of("application/json"), "Accept", List.of("application/json"))));
 
 		objeniousService = feignBuilder.target(ObjeniousService.class, "https://api.objenious.com/v1/");
 	}
@@ -81,7 +82,7 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 	public List<EndDevice> getDevices() {
 		var devices = objeniousService.getDevices();
 		return devices.stream().map(device -> new EndDevice(device.getProperties().getDeveui(), device.getLabel(), ""))
-						.collect(Collectors.toList());
+				.collect(Collectors.toList());
 	}
 
 	public Profile getProfile(int id) {
@@ -119,18 +120,18 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 		deviceCreate.setLng(deviceProvisioning.getLng());
 		deviceCreate.setGroupId(Integer.parseInt(properties.getProperty("groupId")));
 		deviceCreate.setProfileId(
-						Integer.valueOf(deviceProvisioning.getAdditionalProperties().getProperty("deviceProfile")));
+				Integer.valueOf(deviceProvisioning.getAdditionalProperties().getProperty("deviceProfile")));
 		objeniousService.createDevice(deviceCreate);
 	}
 
 	public void configureRouting(String url, String tenant, String login, String password, String name,
-					MessageTypeEnum messageType) {
+			MessageTypeEnum messageType) {
 		RoutingHttp routingHttp = new RoutingHttp();
 		routingHttp.setUrl(url);
 		routingHttp.setMethod(RoutingHttp.MethodEnum.POST);
 		Headers headers = new Headers();
 		headers.put("Authorization", "Basic "
-						+ Base64.getEncoder().encodeToString((tenant + "/" + login + ":" + password).getBytes()));
+				+ Base64.getEncoder().encodeToString((tenant + "/" + login + ":" + password).getBytes()));
 		routingHttp.setHeaders(headers);
 		ScenarioRoutingCreateUpdate scenarioRoutingCreateUpdate = new ScenarioRoutingCreateUpdate();
 		scenarioRoutingCreateUpdate.setHttp(routingHttp);
@@ -163,9 +164,9 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 		});
 
 		configureRouting(url + "/downlink", tenant, login, password, tenant + "-" + this.getId() + "-downlink",
-						MessageTypeEnum.DOWNLINK);
+				MessageTypeEnum.DOWNLINK);
 		configureRouting(url + "/uplink", tenant, login, password, tenant + "-" + this.getId() + "-uplink",
-						MessageTypeEnum.UPLINK);
+				MessageTypeEnum.UPLINK);
 	}
 
 	private void removeRouting(String id) {
@@ -204,21 +205,21 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 				C8YData data = new C8YData();
 				ConnectionState state = ConnectionState.AVAILABLE;
 				switch (g.getStatus()) {
-				case ACTIVE:
-					state = ConnectionState.AVAILABLE;
-					break;
-				case ALERT:
-					state = ConnectionState.AVAILABLE;
-					break;
-				case INACTIVE:
-					state = ConnectionState.UNAVAILABLE;
-					break;
-				default:
-					break;
+					case ACTIVE:
+						state = ConnectionState.AVAILABLE;
+						break;
+					case ALERT:
+						state = ConnectionState.AVAILABLE;
+						break;
+					case INACTIVE:
+						state = ConnectionState.UNAVAILABLE;
+						break;
+					default:
+						break;
 				}
 				Gateway gateway = new Gateway(g.getGatewayId(), g.getSerialNumber(), g.getGatewayName(),
-								BigDecimal.valueOf(g.getLat()), BigDecimal.valueOf(g.getLng()), g.getGatewayType(),
-								state, data);
+						BigDecimal.valueOf(g.getLat()), BigDecimal.valueOf(g.getLng()), g.getGatewayType(),
+						state, data, new HashMap<>());
 				result.add(gateway);
 			});
 		} catch (FeignClientException e) {

@@ -1,6 +1,7 @@
 package lora.ns.gateway;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import c8y.ConnectionState;
 import lora.codec.uplink.C8YData;
@@ -8,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @Builder
@@ -23,4 +23,5 @@ public class Gateway {
     private String type;
     private ConnectionState status;
     private C8YData data;
+    private Map<String, Object> properties;
 }
