@@ -1,6 +1,7 @@
 package lora.ns.kerlink;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -84,8 +85,8 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		// HttpEntity<String>("", headers), new
 		// ParameterizedTypeReference<PaginatedDto<UserDto>>(){});
 		ResponseEntity<PaginatedDto<UserDto>> users = restTemplate.exchange(baseUrl + "/users", HttpMethod.GET,
-						new HttpEntity<String>("", headers), new ParameterizedTypeReference<PaginatedDto<UserDto>>() {
-						});
+				new HttpEntity<String>("", headers), new ParameterizedTypeReference<PaginatedDto<UserDto>>() {
+				});
 		if (users.getStatusCode() == HttpStatus.OK) {
 			for (UserDto user : users.getBody().getList()) {
 				logger.info("Testing user {}", user.getLogin());
@@ -108,13 +109,13 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<PaginatedDto<EndDeviceDto>> response = restTemplate.exchange(baseUrl + "/endDevices",
-						HttpMethod.GET, new HttpEntity<String>("", headers),
-						new ParameterizedTypeReference<PaginatedDto<EndDeviceDto>>() {
-						});
+				HttpMethod.GET, new HttpEntity<String>("", headers),
+				new ParameterizedTypeReference<PaginatedDto<EndDeviceDto>>() {
+				});
 		if (response.hasBody()) {
 			for (EndDeviceDto endDeviceDto : response.getBody().getList()) {
 				result.add(new EndDevice(endDeviceDto.getDevEui(), endDeviceDto.getName(),
-								endDeviceDto.getClassType()));
+						endDeviceDto.getClassType()));
 			}
 		}
 		return result;
@@ -126,10 +127,10 @@ public class KerlinkConnector extends LNSAbstractConnector {
 			login();
 		}
 		String request = String.format(
-						"{\n" + "	\"endDevice\": {\n" + "		\"devEui\": \"%s\"\n" + "	},\n"
-										+ "	\"fPort\": %d,\n" + "	\"payload\": \"%s\",\n" + "	\"confirmed\": false,\n"
-										+ "	\"contentType\": \"HEXA\"\n" + "}",
-						operation.getDevEui(), operation.getFport(), operation.getPayload());
+				"{\n" + "	\"endDevice\": {\n" + "		\"devEui\": \"%s\"\n" + "	},\n"
+						+ "	\"fPort\": %d,\n" + "	\"payload\": \"%s\",\n" + "	\"confirmed\": false,\n"
+						+ "	\"contentType\": \"HEXA\"\n" + "}",
+				operation.getDevEui(), operation.getFport(), operation.getPayload());
 		logger.info("Request: {}", request);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
@@ -140,7 +141,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		RestTemplate restTemplate = new RestTemplate();
 		logger.info("Will send data to {}", baseUrl + "/dataDown");
 		String response = restTemplate.exchange(baseUrl + "/dataDown", HttpMethod.POST,
-						new HttpEntity<String>(request, headers), String.class).getHeaders().getLocation().getPath();
+				new HttpEntity<String>(request, headers), String.class).getHeaders().getLocation().getPath();
 		return response.substring(response.lastIndexOf('/') + 1);
 	}
 
@@ -154,7 +155,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		RestTemplate restTemplate = new RestTemplate();
 		logger.info("Will get device info on URL: {}", baseUrl + "/endDevices/" + devEui);
 		EndDeviceDto endDeviceDto = restTemplate.exchange(baseUrl + "/endDevices/" + devEui, HttpMethod.GET,
-						new HttpEntity<String>("", headers), EndDeviceDto.class).getBody();
+				new HttpEntity<String>("", headers), EndDeviceDto.class).getBody();
 		return new EndDevice(devEui, endDeviceDto.getName(), endDeviceDto.getClassType());
 	}
 
@@ -176,7 +177,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		dto.setAppEui(deviceProvisioning.getAppEUI());
 		dto.setAppKey(deviceProvisioning.getAppKey());
 		restTemplate.exchange(baseUrl + "/endDevices/" + deviceProvisioning.getDevEUI(), HttpMethod.PUT,
-						new HttpEntity<EndDeviceDto>(dto, headers), String.class);
+				new HttpEntity<EndDeviceDto>(dto, headers), String.class);
 	}
 
 	@Override
@@ -198,10 +199,10 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 		RestTemplate restTemplate = new RestTemplate();
 		PaginatedDto<PushConfigurationDto> pushConfigurationDtos = restTemplate
-						.exchange(baseUrl + "/pushConfigurations", HttpMethod.GET, new HttpEntity<String>("", headers),
-										new ParameterizedTypeReference<PaginatedDto<PushConfigurationDto>>() {
-										})
-						.getBody();
+				.exchange(baseUrl + "/pushConfigurations", HttpMethod.GET, new HttpEntity<String>("", headers),
+						new ParameterizedTypeReference<PaginatedDto<PushConfigurationDto>>() {
+						})
+				.getBody();
 		for (PushConfigurationDto pushConfigurationDto : pushConfigurationDtos.getList()) {
 			if (pushConfigurationDto.getName().equals(routingName)) {
 				currentPushConfigurationDto = pushConfigurationDto;
@@ -244,10 +245,10 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		// }
 		if (currentPushConfigurationDto == null) {
 			currentPushConfigurationDto = new PushConfigurationDto(new CustomerDto(customerId), routingName,
-							PushConfigurationType.HTTP, PushConfigurationMSgDetailLevel.NETWORK,
-							new PushConfigurationHeaderDto[] {
-									new PushConfigurationHeaderDto("Content-Type", "application/json") },
-							"/downlink", "/uplink", url, tenant + "/" + login, password);
+					PushConfigurationType.HTTP, PushConfigurationMSgDetailLevel.NETWORK,
+					new PushConfigurationHeaderDto[] {
+							new PushConfigurationHeaderDto("Content-Type", "application/json") },
+					"/downlink", "/uplink", url, tenant + "/" + login, password);
 			logger.info("Will create a new push configuration: {}", currentPushConfigurationDto.toString());
 			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 			List<MediaType> mediaTypes = new ArrayList<>();
@@ -264,7 +265,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 			}
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 			ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/pushConfigurations", HttpMethod.POST,
-							request, String.class);
+					request, String.class);
 			String[] tokens = response.getHeaders().getLocation().getPath().split("/");
 			configId = Integer.parseInt(tokens[tokens.length - 1]);
 		}
@@ -273,14 +274,14 @@ public class KerlinkConnector extends LNSAbstractConnector {
 			headers = new HttpHeaders();
 			headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 			ClusterDto cluster = restTemplate.exchange(baseUrl + "/clusters/" + clusterId, HttpMethod.GET,
-							new HttpEntity<String>("", headers), ClusterDto.class).getBody();
+					new HttpEntity<String>("", headers), ClusterDto.class).getBody();
 			cluster.setPushConfiguration(currentPushConfigurationDto);
 			cluster.setGeolocEnabled(true);
 			cluster.setHexa(true);
 			cluster.setPushEnabled(true);
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/clusters/" + clusterId,
-							HttpMethod.PATCH, new HttpEntity<ClusterDto>(cluster, headers), String.class);
+					HttpMethod.PATCH, new HttpEntity<ClusterDto>(cluster, headers), String.class);
 		}
 	}
 
@@ -294,7 +295,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 			headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.exchange(baseUrl + "/pushConfigurations/" + configId, HttpMethod.DELETE,
-							new HttpEntity<String>("", headers), String.class);
+					new HttpEntity<String>("", headers), String.class);
 		});
 	}
 
@@ -308,7 +309,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		headers.set("Accept", "application/json,application/vnd.kerlink.iot-v1+json");
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.exchange(baseUrl + "/endDevices/" + deveui, HttpMethod.DELETE, new HttpEntity<String>("", headers),
-						String.class);
+				String.class);
 	}
 
 	public List<ClusterDto> getClusters() {
@@ -320,10 +321,10 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 		RestTemplate restTemplate = new RestTemplate();
 		PaginatedDto<ClusterDto> clusterDtos = restTemplate
-						.exchange(baseUrl + "/clusters", HttpMethod.GET, new HttpEntity<String>("", headers),
-										new ParameterizedTypeReference<PaginatedDto<ClusterDto>>() {
-										})
-						.getBody();
+				.exchange(baseUrl + "/clusters", HttpMethod.GET, new HttpEntity<String>("", headers),
+						new ParameterizedTypeReference<PaginatedDto<ClusterDto>>() {
+						})
+				.getBody();
 		for (ClusterDto clusterDto : clusterDtos.getList()) {
 			result.add(clusterDto);
 		}
@@ -341,15 +342,15 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 		RestTemplate restTemplate = new RestTemplate();
 		PaginatedDto<GatewayDto> gatewaysDto = restTemplate
-						.exchange(baseUrl + "/gateways", HttpMethod.GET, new HttpEntity<String>("", headers),
-										new ParameterizedTypeReference<PaginatedDto<GatewayDto>>() {
-										})
-						.getBody();
+				.exchange(baseUrl + "/gateways", HttpMethod.GET, new HttpEntity<String>("", headers),
+						new ParameterizedTypeReference<PaginatedDto<GatewayDto>>() {
+						})
+				.getBody();
 		C8YData c8yData = new C8YData();
 		for (GatewayDto gatewayDto : gatewaysDto.getList()) {
 			result.add(new Gateway(gatewayDto.getEui(), gatewayDto.getEui(), gatewayDto.getName(),
-							gatewayDto.getLatitude(), gatewayDto.getLongitude(), gatewayDto.getDescription(),
-							ConnectionState.AVAILABLE, c8yData));
+					gatewayDto.getLatitude(), gatewayDto.getLongitude(), gatewayDto.getDescription(),
+					ConnectionState.AVAILABLE, c8yData, new HashMap<>()));
 		}
 		return result;
 	}
