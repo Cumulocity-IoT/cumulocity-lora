@@ -55,6 +55,14 @@ export class LoraNavigationFactory implements NavigatorNodeFactory {
       routerLinkExact: false,
     });
 
+    let loraMonitoring: NavigatorNode = new NavigatorNode({
+      label: _("Monitoring"),
+      icon: "monitoring",
+      path: "/loramonitoring",
+      priority: 2,
+      routerLinkExact: false
+    })
+
     let loraNode: NavigatorNode = new NavigatorNode({
       label: _("LoRa"),
       icon: "wifi",
@@ -66,6 +74,7 @@ export class LoraNavigationFactory implements NavigatorNodeFactory {
         loraCodecs,
         loraConfig,
         loraSimulator,
+        loraMonitoring,
       ],
       priority: 2,
       routerLinkExact: false,
