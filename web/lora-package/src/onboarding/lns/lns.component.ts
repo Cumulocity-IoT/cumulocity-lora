@@ -114,6 +114,7 @@ export class LNSComponent {
   // Add a managedObject (as device) to the database.
   async addInstance(type: string, name: string, properties) {
     this.allProperties = { ...this.allProperties, ...properties };
+    delete this.allProperties["instanceName"];
     this.stepValues[this.currentStep] = properties;
     let instance = {
       properties: this.allProperties,
