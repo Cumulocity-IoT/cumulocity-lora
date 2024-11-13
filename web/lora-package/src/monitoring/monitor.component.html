@@ -1,0 +1,14 @@
+<style>
+    .demo-chart {
+        height: 80vh
+    }
+</style>
+<c8y-title translate>LoRa monitoring</c8y-title>
+
+<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"></div>
+<div class="row">
+    <button *ngIf="needCleanUp" (click)="cleanUp()" class="btn btn-danger col-md-2">Clean up wrong links</button>
+    <c8y-form-group class="col-md-2">
+        <label class="c8y-checkbox"><input class="form-control" type="checkbox" [(ngModel)]="displayWrongLinks" (click)="setup()"/><span></span>Display wrong links</label>
+    </c8y-form-group>
+</div>

@@ -13,21 +13,19 @@ import { DeviceProvisioning } from "./DeviceProvisioning";
   providedIn: "root",
 })
 export class LnsService {
-  lnsProxies: IManagedObject[];
-  lnsInstances: IManagedObject[];
+  lnsProxies: IManagedObject[] = [];
+  lnsInstances: IManagedObject[] = [];
   proxyMap: {};
   instanceMap: {};
 
   private lnsProxyFilter: object = {
     type: "LoRa Network Server agent",
-    // paging information will be a part of the response now
     withTotalPages: true,
     pageSize: 1000,
   };
 
   private instanceFilter: object = {
     type: "LNS Connector",
-    // paging information will be a part of the response now
     withTotalPages: true,
     pageSize: 1000,
   };

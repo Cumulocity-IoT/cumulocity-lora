@@ -37,6 +37,8 @@ import { LoraNavigationFactory } from "../factories/Navigation";
 import { SelectTypeComponent } from "../src/onboarding/codecs/select.type";
 import { PropertyEditorComponent } from "../src/onboarding/devices/property-editor.component";
 import { monacoConfig } from "./monacoConfig";
+import { MonitorComponent } from "../src/monitoring/monitor.component";
+import { NgxEchartsModule } from 'ngx-echarts';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { monacoConfig } from "./monacoConfig";
     PanelWrapperComponent,
     SimulatorComponent,
     PropertyEditorComponent,
+    MonitorComponent
   ],
   entryComponents: [GroupsComponent, DevicesComponent],
   imports: [
@@ -88,6 +91,10 @@ import { monacoConfig } from "./monacoConfig";
         path: "lorasimulator",
         component: SimulatorComponent,
       },
+      {
+        path: "loramonitoring",
+        component: MonitorComponent,
+      },
       { path: "health", component: GroupsComponent },
       { path: "lora_command", component: DevicesComponent },
       ...UPGRADE_ROUTES,
@@ -105,6 +112,9 @@ import { monacoConfig } from "./monacoConfig";
       ],
       wrappers: [{ name: "panel", component: PanelWrapperComponent }],
     }),
+    NgxEchartsModule.forRoot({
+      echarts: () => import("echarts")
+    })
   ],
   exports: [],
   providers: [
