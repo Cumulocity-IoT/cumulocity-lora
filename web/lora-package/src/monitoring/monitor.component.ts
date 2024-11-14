@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { IManagedObject, InventoryService } from "@c8y/client";
 import { ECharts, EChartsOption } from 'echarts';
 import { LnsService } from "../service/LnsService";
+import { Location } from "@angular/common";
 
 @Component({
     selector: "loramonitoring",
@@ -83,7 +84,7 @@ export class MonitorComponent {
         ]
     };
 
-    constructor(private lnsService: LnsService, private inventory: InventoryService) {
+    constructor(private lnsService: LnsService, private inventory: InventoryService, public location: Location) {
     }
 
     getAvailabilityStyle(mor: IManagedObject): string {
@@ -153,7 +154,7 @@ export class MonitorComponent {
                     params.data["unfold"] = true;
                 }
                 if (params.data["lora_ns_device_LoRaDevice"] || params.data["lora_ns_gateway_LoRaGateway"]) {
-                    
+                    this.location.replaceState("/device/" + params.data["id"]);
                 }
             }
         })
