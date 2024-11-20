@@ -313,25 +313,12 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 		ManagedObject agentApi = inventoryApi.getManagedObjectApi(agentService.getAgent().getId());
 		agentApi.addChildDevice(mor.getId());
 
+		String category = mor.getId().getValue();
+		savePropertiesAsTenantOptions(connectorRepresentation.getProperties(), category);
+
 		LNSConnector instance = getInstance(mor);
 
-		Properties allProperties = new Properties();
-		allProperties.putAll(instance.getInitProperties());
-		allProperties.putAll(connectorRepresentation.getProperties());
-		instance.setProperties(allProperties);
-
-		String category = mor.getId().getValue();
-		allProperties.forEach((k, v) -> {
-			OptionRepresentation option = new OptionRepresentation();
-			option.setCategory(category);
-			if (isPropertyEncrypted(k.toString())) {
-				option.setKey("credentials." + k.toString());
-			} else {
-				option.setKey(k.toString());
-			}
-			option.setValue(v.toString());
-			tenantOptionApi.save(option);
-		});
+		savePropertiesAsTenantOptions(instance.getInitProperties(), category);
 
 		lnsConnectorManager.addConnector(instance);
 		Optional<MicroserviceCredentials> credentials = subscriptionsService
@@ -344,6 +331,20 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 				instance.getId(), instance.getName(), instance.getType(), instance.getProperties());
 
 		return mor;
+	}
+
+	private void savePropertiesAsTenantOptions(Properties properties, String category) {
+		properties.forEach((k, v) -> {
+			OptionRepresentation option = new OptionRepresentation();
+			option.setCategory(category);
+			if (isPropertyEncrypted(k.toString())) {
+				option.setKey("credentials." + k.toString());
+			} else {
+				option.setKey(k.toString());
+			}
+			option.setValue(v.toString());
+			tenantOptionApi.save(option);
+		});
 	}
 
 	public void removeLnsConnector(String lnsConnectorId) {
