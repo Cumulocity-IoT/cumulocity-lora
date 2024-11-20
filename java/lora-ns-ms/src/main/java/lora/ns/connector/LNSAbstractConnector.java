@@ -77,6 +77,8 @@ public abstract class LNSAbstractConnector implements LNSConnector, Initializing
 		for (OptionRepresentation option : tenantOptionApi.getAllOptionsForCategory(this.getId())) {
 			this.properties.setProperty(option.getKey(), option.getValue());
 		}
+		mergeProperties(this.getInitProperties());
+		log.info("Using following properties: {}", this.properties);
 		init();
 	}
 
