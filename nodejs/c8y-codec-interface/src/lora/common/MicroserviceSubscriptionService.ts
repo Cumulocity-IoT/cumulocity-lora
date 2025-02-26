@@ -66,6 +66,15 @@ export class MicroserviceSubscriptionService extends EventEmitter {
   }
 
   getClient(request: Request): Promise<Client> {
+    if (!request.headers.authorization) {
+      return new Promise<Client>((resolve, reject) => {
+        reject(
+          new Error(
+            `No Authorization header found!`
+          )
+        );
+      });
+    }
     this.logger.info("Authorization: " + request.headers.authorization);
     let currentTenant: string = Buffer.from(
       request.headers.authorization.split(" ")[1],
