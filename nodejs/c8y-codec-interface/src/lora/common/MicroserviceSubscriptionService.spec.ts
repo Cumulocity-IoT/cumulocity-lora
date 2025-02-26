@@ -23,6 +23,7 @@ describe("Test microservice subscription service", () => {
         bodyUsed: true,
         blob: null,
         formData: null,
+        bytes: null,
       };
       return response;
     });
@@ -59,6 +60,7 @@ describe("Test microservice subscription service", () => {
         bodyUsed: true,
         blob: null,
         formData: null,
+        bytes: null,
       };
       return response;
     });
