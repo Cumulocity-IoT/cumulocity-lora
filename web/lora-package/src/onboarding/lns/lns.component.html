@@ -13,7 +13,7 @@
         instanceName.invalid && (instanceName.dirty || instanceName.touched)
       ">
           <label for="instanceName">Name:</label>
-          <input #instanceName="ngModel" required [(ngModel)]="instanceProperties.instanceName"/>
+          <input class="form-control" #instanceName required/>
           <c8y-messages *ngIf="
           instanceName.invalid && (instanceName.dirty || instanceName.touched)
             ">
@@ -84,10 +84,10 @@
           class="btn btn-primary">
           Previous step
         </button>
-        <button *ngIf="wizard.length === currentStep + 1" type="button" [disabled]="!instanceName.value" (click)="
+        <button *ngIf="wizard.length === currentStep + 1" type="button" [disabled]="!instanceName.value || !instanceProperties.form.valid" (click)="
             addInstance(
               model.value,
-              instanceProperties.value.instanceName,
+              instanceName.value,
               instanceProperties.value
             )
           " class="btn btn-primary">
