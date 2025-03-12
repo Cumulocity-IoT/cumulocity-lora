@@ -115,6 +115,8 @@ export class LNSComponent {
   async addInstance(type: string, name: string, properties) {
     this.allProperties = { ...this.allProperties, ...properties };
     delete this.allProperties["instanceName"];
+    console.log(name);
+    console.log(this.allProperties);
     this.stepValues[this.currentStep] = properties;
     let instance = {
       properties: this.allProperties,
@@ -180,7 +182,11 @@ export class LNSComponent {
         } else {
           let error = await values.json();
           console.log(error);
-          this.alertService.danger(error.message, error.detailedMessage);
+          if (error.message) {
+            this.alertService.danger(error.message, error.detailedMessage);
+          } else {
+            this.alertService.danger("Internal server error", "Please review the parameters");
+          }
         }
       }
     });
