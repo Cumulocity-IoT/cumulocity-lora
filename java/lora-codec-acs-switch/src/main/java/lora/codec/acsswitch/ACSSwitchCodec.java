@@ -309,6 +309,45 @@ public class ACSSwitchCodec extends DeviceCodec {
 		DateTime time = getTime(buffer.getInt());
 		EVENT_SOURCE eventSource = EVENT_SOURCE.BY_VALUE.get(buffer.get());
 		int state = buffer.get();
+		
+		String alarmText;
+		CumulocitySeverities severity;
+		
+		switch (state) {
+			case 0x00:
+				alarmText = "Inactive state detected from " + eventSource.name();
+				severity = CumulocitySeverities.MINOR;
+				break;
+			case 0x01:
+				alarmText = "Active state detected from " + eventSource.name();
+				severity = CumulocitySeverities.MAJOR;
+				break;
+			case 0x02:
+				if (eventSource == EVENT_SOURCE.TEMPERATURE_SENSOR) {
+					alarmText = "Temperature sensor: too many acquisition errors";
+				} else {
+					alarmText = "Manual reset of counters executed through internal reed";
+				}
+				severity = CumulocitySeverities.WARNING;
+				break;
+			case 0x03:
+				alarmText = "MEMS data acquisition error - possible fraud attempt";
+				severity = CumulocitySeverities.CRITICAL;
+				break;
+			case 0x04:
+				alarmText = "MEMS: Initialization of reference position has occurred";
+				severity = CumulocitySeverities.WARNING;
+				break;
+			default:
+				alarmText = "Unknown state: " + state + " from " + eventSource.name();
+				severity = CumulocitySeverities.WARNING;
+		}
+		
+		// Create the alarm
+		c8yData.addAlarm(mor, "ACS_Switch_Alarm", alarmText, severity, time);
+		
+		// Extract remaining data (similar to presence frame)
+		extractDataV1(buffer, mor, c8yData, time);
 	}
 
 	private void alarmFrameV2(ByteBuffer buffer, ManagedObjectRepresentation mor, C8YData c8yData) {
@@ -316,18 +355,89 @@ public class ACSSwitchCodec extends DeviceCodec {
 		EVENT_SOURCE eventSource = EVENT_SOURCE.BY_VALUE.get(buffer.get());
 		SOURCE_CONFIG sourceConfiguration = SOURCE_CONFIG.BY_VALUE
 				.get((short) ((short) eventSource.code << 8 + (short) buffer.get()));
+		logger.info("Alarm frame received at {}: {}", time, sourceConfiguration.name());
 	}
 
 	private void alarmStillActiveFrameV1(ByteBuffer buffer, ManagedObjectRepresentation mor, C8YData c8yData) {
 		DateTime time = getTime(buffer.getInt());
 		EVENT_SOURCE eventSource = EVENT_SOURCE.BY_VALUE.get(buffer.get());
+		int state = buffer.get();
+		
+		String alarmText;
+		CumulocitySeverities severity;
+		
+		switch (state) {
+			case 0x00:
+				alarmText = "Inactive state still active from " + eventSource.name();
+				severity = CumulocitySeverities.MINOR;
+				break;
+			case 0x01:
+				alarmText = "Active state still active from " + eventSource.name();
+				severity = CumulocitySeverities.MAJOR;
+				break;
+			case 0x02:
+				if (eventSource == EVENT_SOURCE.TEMPERATURE_SENSOR) {
+					alarmText = "Temperature sensor: acquisition errors still present";
+				} else {
+					alarmText = "Manual reset of counters still active";
+				}
+				severity = CumulocitySeverities.WARNING;
+				break;
+			default:
+				alarmText = "Unknown state still active: " + state + " from " + eventSource.name();
+				severity = CumulocitySeverities.WARNING;
+		}
+		
+		logger.info("Alarm still active frame received at {}: {}", time, alarmText);
+		
+		// Create alarm with status set to active
+		c8yData.addAlarm(mor, "ACS_Switch_Alarm_StillActive", alarmText, severity, time);
+		
+		// Extract remaining data (similar to presence frame)
+		extractDataV1(buffer, mor, c8yData, time);
 	}
 
 	private void alarmStillActiveFrameV2(ByteBuffer buffer, ManagedObjectRepresentation mor, C8YData c8yData) {
 		DateTime time = getTime(buffer.getInt());
 		EVENT_SOURCE eventSource = EVENT_SOURCE.BY_VALUE.get(buffer.get());
+		byte sourceConfigByte = buffer.get();
 		SOURCE_CONFIG sourceConfiguration = SOURCE_CONFIG.BY_VALUE
-				.get((short) ((short) eventSource.code << 8 + (short) buffer.get()));
+				.get((short) ((short) (eventSource.code << 8) | (short) (sourceConfigByte & 0xff)));
+		
+		int state = buffer.get();
+		
+		String alarmText;
+		CumulocitySeverities severity;
+		
+		switch (state) {
+			case 0x00:
+				alarmText = "Inactive state still active: " + sourceConfiguration.name();
+				severity = CumulocitySeverities.MINOR;
+				break;
+			case 0x01:
+				alarmText = "Active state still active: " + sourceConfiguration.name();
+				severity = CumulocitySeverities.MAJOR;
+				break;
+			case 0x02:
+				if (eventSource == EVENT_SOURCE.TEMPERATURE_SENSOR || eventSource == EVENT_SOURCE.HUMIDITY_SENSOR) {
+					alarmText = eventSource.name() + " sensor: acquisition errors still present";
+				} else {
+					alarmText = "Manual reset of counters still active";
+				}
+				severity = CumulocitySeverities.WARNING;
+				break;
+			default:
+				alarmText = "Unknown state still active: " + state + " from " + sourceConfiguration.name();
+				severity = CumulocitySeverities.WARNING;
+		}
+		
+		logger.info("Alarm still active frame received at {}: {}", time, alarmText);
+		
+		// Create alarm with status set to active
+		c8yData.addAlarm(mor, "ACS_Switch_Alarm_StillActive", alarmText, severity, time);
+		
+		// Extract remaining data (similar to presence frame)
+		extractDataV2(buffer, mor, c8yData, time, sourceConfiguration);
 	}
 
 	private DateTime getTime(int timestamp) {
