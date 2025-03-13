@@ -2,6 +2,7 @@ package lora.github;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,9 @@ public class GithubRestController {
             Response<List<Release>> response = githubService.getReleases().execute();
             if (response.isSuccessful()) {
                 result = response.body();
-                result.forEach(r -> r.getAssets().removeIf(a -> !a.getName().startsWith("lora")));
+                if (result != null) {
+                    result.forEach(r -> r.getAssets().removeIf(a -> !a.getName().startsWith("lora")));
+                }
             }
         } catch (IOException e) {
             logger.error("Couldn't retrieve github releases", e);
@@ -107,7 +110,7 @@ public class GithubRestController {
 
             @Override
             public void writeTo(BufferedSink sink) throws IOException {
-                URL url = new URL(asset.getBrowserDownloadUrl());
+                URL url = URI.create(asset.getBrowserDownloadUrl()).toURL();
                 try (InputStream is = url.openStream()) {
                     is.transferTo(sink.outputStream());
                 }
@@ -130,12 +133,14 @@ public class GithubRestController {
                     logger.info("Subscription was successful");
                     result = "{result: 'OK'}";
                 } else {
-                    logger.error("An error occurred while subscribing to the microservice: {} {} {}", response.code(),
-                            response.message(), response.errorBody().string());
+                    String errorDetails = getErrorBodyString(response.errorBody());
+                    logger.error("An error occurred while subscribing to the microservice: {} {}{}", response.code(),
+                            response.message(), errorDetails);
                 }
             } else {
-                logger.error("An error occurred while uploading the microservice: {} {} {}", response.code(),
-                        response.message(), response.errorBody().string());
+                String errorDetails = getErrorBodyString(response.errorBody());
+                logger.error("An error occurred while uploading the microservice: {} {}{}", response.code(),
+                        response.message(), errorDetails);
             }
         } catch (IOException e1) {
             logger.error("Couldn't upload application file", e1);
@@ -166,6 +171,24 @@ public class GithubRestController {
         }
     }
 
+    /**
+     * Safely extracts error body string from ResponseBody
+     * @param errorBody the error body to extract string from
+     * @return formatted error message or empty string if error body is null or can't be read
+     */
+    private String getErrorBodyString(ResponseBody errorBody) {
+        if (errorBody == null) {
+            return "";
+        }
+        
+        try {
+            return " " + errorBody.string();
+        } catch (IOException e) {
+            logger.debug("Could not read error body", e);
+            return " (could not read error details)";
+        }
+    }
+    
     public GithubRestController() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
