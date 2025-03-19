@@ -5,13 +5,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.softwareag</groupId>
   <artifactId>lora</artifactId>
-  <version>1.1.6</version>
+  <version>1.1.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <c8y.version>1015.0.278</c8y.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <spring-boot-dependencies.version>2.7.18</spring-boot-dependencies.version>
     <feign.version>13.2.1</feign.version>
   </properties>
