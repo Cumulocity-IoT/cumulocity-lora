@@ -7,10 +7,7 @@ import lora.ns.connector.PropertyDescription;
 class ConnectorWizardStep1 implements LNSConnectorWizardStep {
 
     private final List<PropertyDescription> propertyDescriptions = List.of(
-            PropertyDescription.text("apikey", "API Key", true).withEncrypted(true),
-            PropertyDescription.text("proxy-host", "Proxy Host", false),
-            PropertyDescription.number("proxy-port", "Proxy Port", false),
-            PropertyDescription.text("webhook-url", "Webhook URL", false));
+            PropertyDescription.text("apikey", "API Key", true).withEncrypted(true));
 
     public String getName() {
         return "step1";
