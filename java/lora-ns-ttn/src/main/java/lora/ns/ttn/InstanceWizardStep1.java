@@ -9,7 +9,8 @@ public class InstanceWizardStep1 implements LNSConnectorWizardStep {
 
 	private final List<PropertyDescription> propertyDescriptions = List.of(
 			new PropertyDescription("address", "Address", true, null, null, null, null, null, null, null, PropertyType.TEXT, false),
-			new PropertyDescription("apikey", "API Key", true, null, null, null, null, null, null, null, PropertyType.TEXT, true));
+			new PropertyDescription("apikey", "API Key", true, null, null, null, null, null, null, null, PropertyType.TEXT, true),
+			new PropertyDescription("mqtt", "MQTT", true, null, null, null, null, null, null, null, PropertyType.BOOLEAN, false));
 
 	@Override
 	public String getName() {
