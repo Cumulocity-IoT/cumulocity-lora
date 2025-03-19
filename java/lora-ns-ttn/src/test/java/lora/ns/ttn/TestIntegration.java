@@ -34,7 +34,7 @@ public class TestIntegration {
 
     @Test
     public void testUplink() {
-        TTNIntegrationService service = new TTNIntegrationService();
+        TTNUplinkProcessor service = new TTNUplinkProcessor();
         DeviceData deviceData = service.processUplinkEvent("{\"uplink_message\": {\"rx_metadata\": [{\"snr\": 11.2}]}}}");
         System.out.println(deviceData.getMeasurements().get(0).toJSON());
     }
