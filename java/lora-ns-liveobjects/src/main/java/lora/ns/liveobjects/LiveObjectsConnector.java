@@ -94,7 +94,7 @@ public class LiveObjectsConnector extends LNSAbstractConnector {
 
 	@Override
 	public EndDevice getDevice(String devEui) {
-		var device = service.getDevice(LORA_PREFIX + devEui);
+		var device = service.getDevice(LORA_PREFIX + devEui.toLowerCase());
 		return new EndDevice(devEui, device.getName(), devEui);
 	}
 
