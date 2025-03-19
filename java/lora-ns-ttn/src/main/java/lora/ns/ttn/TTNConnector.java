@@ -11,11 +11,14 @@ import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLException;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 
 import com.cumulocity.microservice.subscription.service.MicroserviceSubscriptionsService;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -38,6 +41,7 @@ import lora.codec.uplink.C8YData;
 import lora.ns.connector.LNSAbstractConnector;
 import lora.ns.device.DeviceProvisioning;
 import lora.ns.device.EndDevice;
+import lora.ns.exception.DownlinkProcessingException;
 import lora.ns.gateway.Gateway;
 import ttn.lorawan.v3.AppAsGrpc;
 import ttn.lorawan.v3.AppAsGrpc.AppAsBlockingStub;
@@ -89,6 +93,7 @@ import ttn.lorawan.v3.Lorawan.MACVersion;
 import ttn.lorawan.v3.Lorawan.PHYVersion;
 import ttn.lorawan.v3.Messages.ApplicationDownlink;
 import ttn.lorawan.v3.Messages.DownlinkQueueRequest;
+import ttn.lorawan.v3.Mqtt.MQTTConnectionInfo;
 import ttn.lorawan.v3.NsEndDeviceRegistryGrpc;
 import ttn.lorawan.v3.NsEndDeviceRegistryGrpc.NsEndDeviceRegistryBlockingStub;
 import ttn.lorawan.v3.OrganizationAccessGrpc;
@@ -107,6 +112,13 @@ public class TTNConnector extends LNSAbstractConnector {
         private ManagedChannel managedChannel;
 
         private BearerToken token;
+
+        private MqttClient mqttClient;
+
+        private String baseTopic;
+
+        @Autowired
+        private TTNUplinkProcessor uplinkProcessor;
 
         private final Logger logger = LoggerFactory.getLogger(TTNConnector.class);
 
@@ -131,6 +143,34 @@ public class TTNConnector extends LNSAbstractConnector {
                                         .build();
                 }
                 token = new BearerToken(properties.getProperty("apikey"));
+
+                if (properties.containsKey("mqtt") && properties.getProperty("mqtt").equals("true")) {
+                        MQTTConnectionInfo mqttConnectionInfo = getMqttConnectionInfo();
+                        MqttConnectOptions options = new MqttConnectOptions();
+                        options.setServerURIs(new String[] { "ssl://" + mqttConnectionInfo.getPublicTlsAddress() });
+                        options.setUserName(mqttConnectionInfo.getUsername());
+                        options.setPassword(properties.getProperty("apikey").toCharArray());
+                        options.setCleanSession(true);
+                        options.setAutomaticReconnect(true);
+                        baseTopic = "v3/" + mqttConnectionInfo.getUsername() + "/devices";
+                        try {
+                                mqttClient = new MqttClient("ssl://" + mqttConnectionInfo.getPublicTlsAddress(), "Cumulocity");
+                                mqttClient.connect(options);
+                                mqttClient.subscribe(baseTopic + "/+/up", (topic, message) -> {
+                                        logger.info("Received message on topic: {}", topic);
+                                        logger.info("Message content: {}", new String(message.getPayload()));
+                                        uplinkProcessor.processUplinkEvent(new String(message.getPayload()));
+                                });
+                                mqttClient.subscribe(baseTopic + "/+/down/+", (topic, message) -> {
+                                        logger.info("Received message on topic: {}", topic);
+                                        logger.info("Message content: {}", new String(message.getPayload()));
+                                        uplinkProcessor.processDownlinkEvent(new String(message.getPayload()));
+                                });
+                        } catch (MqttException e) {
+                                e.printStackTrace();
+                                logger.error("Can't initiate MQTT connection", e);
+                        }
+                }
         }
 
         @Override
@@ -165,21 +205,44 @@ public class TTNConnector extends LNSAbstractConnector {
         @Override
         public String sendDownlink(DownlinkData operation) {
                 logger.info("Will send {} to TTN.", operation);
-
                 String downlinkCorrelationId = UUID.randomUUID().toString();
                 logger.info("Will send a downlink with correlation Id: {}", downlinkCorrelationId);
-                ApplicationDownlink downlink = ApplicationDownlink.newBuilder().setFPort(operation.getFport())
-                                .setConfirmed(true)
-                                .setFrmPayload(ByteString.copyFrom(
-                                                BaseEncoding.base16()
-                                                                .decode(operation.getPayload().toUpperCase())))
-                                .addCorrelationIds("c8y:" + downlinkCorrelationId).build();
-
-                AppAsBlockingStub asService = AppAsGrpc.newBlockingStub(managedChannel)
-                                .withCallCredentials(token);
-
-                asService.downlinkQueuePush(DownlinkQueueRequest.newBuilder().addDownlinks(downlink)
-                                .setEndDeviceIds(getDeviceIds(operation.getDevEui())).build());
+                if (properties.getProperty("mqtt").equals("true")) {
+                        logger.info("MQTT is enabled, publishing downlink to MQTT topic");
+                        MqttMessage message = new MqttMessage();
+                        String downlink = """
+                        {"downlinks": [
+                                "f_port": "%s",
+                                "frm_payload": "%s",
+                                "confirmed": true,
+                                "correlation_ids": ["c8y:%s"]
+                        ]}
+                        """.formatted(operation.getFport(), ByteString.copyFrom(
+                                BaseEncoding.base16()
+                                                .decode(operation.getPayload().toUpperCase())), downlinkCorrelationId);
+                        logger.info("Downlink payload: {}", downlink);
+                        message.setPayload(downlink.getBytes());
+                        try {
+                                mqttClient.publish(baseTopic + "/" + operation.getDevEui() + "/down/push", message);
+                        } catch (MqttException e) {
+                                e.printStackTrace();
+                                logger.error("Failed to publish downlink to MQTT topic", e);
+                                throw new DownlinkProcessingException("Failed to publish downlink to MQTT topic", e);
+                        }
+                } else {
+                        ApplicationDownlink downlink = ApplicationDownlink.newBuilder().setFPort(operation.getFport())
+                                        .setConfirmed(true)
+                                        .setFrmPayload(ByteString.copyFrom(
+                                                        BaseEncoding.base16()
+                                                                        .decode(operation.getPayload().toUpperCase())))
+                                        .addCorrelationIds("c8y:" + downlinkCorrelationId).build();
+        
+                        AppAsBlockingStub asService = AppAsGrpc.newBlockingStub(managedChannel)
+                                        .withCallCredentials(token);
+        
+                        asService.downlinkQueuePush(DownlinkQueueRequest.newBuilder().addDownlinks(downlink)
+                                        .setEndDeviceIds(getDeviceIds(operation.getDevEui())).build());
+                }
                 return downlinkCorrelationId;
         }
 
@@ -273,6 +336,10 @@ public class TTNConnector extends LNSAbstractConnector {
 
         @Override
         public void configureRoutings(String url, String tenant, String login, String password) {
+                if (properties.containsKey("mqtt") && properties.getProperty("mqtt").equals("true")) {
+                        logger.info("MQTT is enabled, skipping routing configuration");
+                        return;
+                }
                 logger.info("Configuring routings to: {} with credentials: {}:{} on TTN app {}", url, login, password,
                                 properties.getProperty(APPID));
                 ApplicationWebhookRegistryBlockingStub app = ApplicationWebhookRegistryGrpc
@@ -315,6 +382,10 @@ public class TTNConnector extends LNSAbstractConnector {
 
         @Override
         public void removeRoutings() {
+                if (properties.containsKey("mqtt") && properties.getProperty("mqtt").equals("true")) {
+                        logger.info("MQTT is enabled, skipping routing suppression");
+                        return;
+                }
                 ApplicationWebhookRegistryBlockingStub app = ApplicationWebhookRegistryGrpc
                                 .newBlockingStub(managedChannel)
                                 .withCallCredentials(token);
@@ -492,5 +563,12 @@ public class TTNConnector extends LNSAbstractConnector {
 
         public boolean hasGatewayManagementCapability() {
                 return true;
+        }
+
+        private MQTTConnectionInfo getMqttConnectionInfo() {
+                AppAsBlockingStub appAs = AppAsGrpc.newBlockingStub(managedChannel).withCallCredentials(token);
+                return appAs.getMQTTConnectionInfo(ApplicationIdentifiers.newBuilder()
+                                                .setApplicationId(properties.getProperty(APPID))
+                                                .build());
         }
 }
