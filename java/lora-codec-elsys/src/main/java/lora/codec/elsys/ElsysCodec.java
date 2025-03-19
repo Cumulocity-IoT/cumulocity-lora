@@ -611,6 +611,7 @@ public class ElsysCodec extends DeviceCodec {
 		return c8yData;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected DownlinkData encode(ManagedObjectRepresentation mor, Encode encode) {
 		DownlinkData result = new DownlinkData();
@@ -647,6 +648,8 @@ public class ElsysCodec extends DeviceCodec {
 								for (int i : (List<Integer>) elem.getValue()) {
 									value = (value << 8) | (i & 0xff);
 								}
+							default:
+								break;
 						}
 						payload += String.format("%1$02X%2$0" + setting.size * 2 + "X", setting.id, value);
 					}

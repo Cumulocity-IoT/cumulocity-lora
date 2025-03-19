@@ -55,6 +55,7 @@ public class AxiomaCodec extends DeviceCodec {
 		}
 	}
 	
+	@SuppressWarnings({ "unchecked", "null" })
 	private enum VIF {
 		DATE_TIME(new byte[] {(byte)0xFF, (byte)0x89, 0x13}),
 		STATUS_CODE(new byte[] {(byte)0xFD, 0x17}),

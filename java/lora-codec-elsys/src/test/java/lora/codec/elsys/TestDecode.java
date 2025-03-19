@@ -15,6 +15,7 @@ import lora.codec.uplink.Decode;
 
 public class TestDecode {
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPayload() {
 		ElsysCodec codec = new ElsysCodec();
