@@ -101,7 +101,7 @@ public class LiveObjectsConnector extends LNSAbstractConnector {
 	@Override
 	public String sendDownlink(DownlinkData operation) {
 		return service
-				.createCommand(LORA_PREFIX + operation.getDevEui(),
+				.createCommand(LORA_PREFIX + operation.getDevEui().toLowerCase(),
 						new Command(new lora.ns.liveobjects.rest.model.Request()
 								.withValue(new RequestValue(operation.getPayload(), operation.getFport())),
 								new CommandPolicy()))
@@ -171,7 +171,7 @@ public class LiveObjectsConnector extends LNSAbstractConnector {
 
 	@Override
 	public void deprovisionDevice(String deveui) {
-		service.deleteDevice(LORA_PREFIX + deveui);
+		service.deleteDevice(LORA_PREFIX + deveui.toLowerCase());
 	}
 
 	@Override
