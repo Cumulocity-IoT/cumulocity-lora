@@ -85,10 +85,9 @@ export class MicroserviceSubscriptionService extends EventEmitter {
         currentTenant = this.extractTenantFromBasicAuth(request.headers.authorization);
         this.logger.info("Current Tenant (Basic): " + currentTenant);
       } 
-      else if (request.cookies && request.cookies.authorization && request.headers["x-xsrf-token"]) {
+      else if (request.cookies && request.cookies.authorization) {
         // OAI authentication
         this.logger.info("Using OAI Authentication");
-        this.logger.info("XSRF Token: " + request.headers["x-xsrf-token"]);
         
         currentTenant = this.extractTenantFromOAIAuth(request.cookies.authorization);
         this.logger.info("Current Tenant (OAI): " + currentTenant);
@@ -98,7 +97,7 @@ export class MicroserviceSubscriptionService extends EventEmitter {
         this.logger.error("No valid authentication method found");
         return Promise.reject(
           new Error(
-            "No valid authentication found. Please provide either Basic Authentication or OAI Authentication with cookies and x-xsrf-token."
+            "No valid authentication found. Please provide either Basic Authentication or OAI Authentication."
           )
         );
       }
