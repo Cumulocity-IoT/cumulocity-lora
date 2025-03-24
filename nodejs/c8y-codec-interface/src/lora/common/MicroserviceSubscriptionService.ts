@@ -65,32 +65,106 @@ export class MicroserviceSubscriptionService extends EventEmitter {
     return this.clients;
   }
 
+  /**
+   * Get the client for the current tenant based on the authentication information in the request
+   */
   getClient(request: Request): Promise<Client> {
-    if (!request.headers.authorization) {
-      return new Promise<Client>((resolve, reject) => {
-        reject(
+    Object.entries(request.headers).forEach(([key, value]) => {
+      this.logger.info(`${key}: ${value}`);
+    });
+
+    let currentTenant: string;
+
+    try {
+      // Try to extract tenant from request using appropriate authentication method
+      if (request.headers.authorization) {
+        // Basic authentication
+        this.logger.info("Using Basic Authentication");
+        this.logger.info("Authorization: " + request.headers.authorization);
+        
+        currentTenant = this.extractTenantFromBasicAuth(request.headers.authorization);
+        this.logger.info("Current Tenant (Basic): " + currentTenant);
+      } 
+      else if (request.cookies && request.cookies.authorization && request.headers["x-xsrf-token"]) {
+        // OAI authentication
+        this.logger.info("Using OAI Authentication");
+        this.logger.info("XSRF Token: " + request.headers["x-xsrf-token"]);
+        
+        currentTenant = this.extractTenantFromOAIAuth(request.cookies.authorization);
+        this.logger.info("Current Tenant (OAI): " + currentTenant);
+      }
+      else {
+        // No valid authentication found
+        this.logger.error("No valid authentication method found");
+        return Promise.reject(
           new Error(
-            `No Authorization header found!`
+            "No valid authentication found. Please provide either Basic Authentication or OAI Authentication with cookies and x-xsrf-token."
           )
         );
-      });
+      }
+
+      // Get client for the extracted tenant (common for both authentication methods)
+      return this.getClientForTenant(currentTenant);
+    } 
+    catch (error) {
+      this.logger.error("Error processing authentication: " + error.message);
+      return Promise.reject(error);
     }
-    this.logger.info("Authorization: " + request.headers.authorization);
-    let currentTenant: string = Buffer.from(
-      request.headers.authorization.split(" ")[1],
-      "base64"
-    )
-      .toString("binary")
-      .split("/")[0];
-    this.logger.info("Current Tenant: " + currentTenant);
-    let client: Client = this.clients.get(currentTenant);
+  }
+
+  /**
+   * Extract tenant from Basic Authentication header
+   */
+  private extractTenantFromBasicAuth(authHeader: string): string {
+    // Format: "Basic base64(tenant/username:password)"
+    const base64Credentials = authHeader.split(" ")[1];
+    const credentials = Buffer.from(base64Credentials, "base64").toString("binary");
+    const tenant = credentials.split("/")[0];
+    
+    if (!tenant) {
+      throw new Error("Could not extract tenant from Basic Authentication");
+    }
+    
+    return tenant;
+  }
+
+  /**
+   * Extract tenant from OAI Authentication cookie
+   */
+  private extractTenantFromOAIAuth(authCookie: string): string {
+    // Parse JWT token (assuming the cookie contains a JWT)
+    // Format is typically: header.payload.signature
+    const parts = authCookie.split('.');
+    if (parts.length !== 3) {
+      throw new Error("Invalid authorization cookie format");
+    }
+    
+    // Decode the payload part (second part)
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
+    
+    // Extract tenant information from the payload
+    const tenant = payload.ten;
+    
+    if (!tenant) {
+      throw new Error("Could not extract tenant from authorization cookie");
+    }
+    
+    return tenant;
+  }
+
+  /**
+   * Get client for a specific tenant
+   */
+  private getClientForTenant(tenant: string): Promise<Client> {
+    const client = this.clients.get(tenant);
+    
     return new Promise<Client>((resolve, reject) => {
       if (client) {
         resolve(client);
       } else {
         reject(
           new Error(
-            `Tenant ${currentTenant} didn't subsribe to this microservice!`
+            `Tenant ${tenant} didn't subsribe to this microservice!`
           )
         );
       }
