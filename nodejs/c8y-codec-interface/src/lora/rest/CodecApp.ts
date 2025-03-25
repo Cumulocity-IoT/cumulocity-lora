@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
 import { DeviceCodec, Decode, Encode, MicroserviceSubscriptionService } from "../..";
 import { DeviceOperation } from "../codec/downlink/DeviceOperation";
 
@@ -8,6 +9,7 @@ export class CodecApp {
 
   constructor(codec: DeviceCodec, subscriptionService: MicroserviceSubscriptionService) {
     this.app.use(express.json());
+    this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.post("/decode", async (req: Request, res: Response, next: NextFunction) => {
       let decode: Decode = req.body;
