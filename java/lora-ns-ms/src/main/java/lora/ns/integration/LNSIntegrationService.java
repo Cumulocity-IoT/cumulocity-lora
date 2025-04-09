@@ -235,7 +235,8 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 					lnsDeviceManager.upsertDevice(lnsInstanceId, data);
 				}
 			} catch (Exception e) {
-				throw new UplinkProcessingException("Could not process uplink " + event, e);
+				log.error("Could not process uplink " + eventString, e);
+				throw new UplinkProcessingException("Could not process uplink " + eventString, e);
 			}
 		}
 		c8yUtils.callWithoutAppContext(() -> eventApi.create(event));
@@ -271,7 +272,8 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 				}
 			}
 		} catch (Exception e) {
-			throw new DownlinkProcessingException("Could not process downlink update " + event, e);
+			log.error("Could not process downlink " + event, e);
+			throw new DownlinkProcessingException("Could not process downlink " + event, e);
 		}
 	}
 
