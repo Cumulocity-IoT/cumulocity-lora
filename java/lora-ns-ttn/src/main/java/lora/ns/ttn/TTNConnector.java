@@ -207,7 +207,7 @@ public class TTNConnector extends LNSAbstractConnector {
                 logger.info("Will send {} to TTN.", operation);
                 String downlinkCorrelationId = UUID.randomUUID().toString();
                 logger.info("Will send a downlink with correlation Id: {}", downlinkCorrelationId);
-                if (properties.getProperty("mqtt").equals("true")) {
+                if (properties.containsKey("mqtt") && properties.getProperty("mqtt").equals("true")) {
                         logger.info("MQTT is enabled, publishing downlink to MQTT topic");
                         MqttMessage message = new MqttMessage();
                         String downlink = """
