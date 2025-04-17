@@ -320,5 +320,7 @@ public class LNSDeviceService {
 		update.removeProperty("c8y_RequiredInterval");
 		update.setProperty(PROVISIONED, false);
 		inventoryApi.update(update);
+		// We need to remove the device from the LNS connector child devices list
+		inventoryApi.getManagedObjectApi(GId.asGId(lnsInstanceId)).deleteChildDevice(mor.getId());
 	}
 }
