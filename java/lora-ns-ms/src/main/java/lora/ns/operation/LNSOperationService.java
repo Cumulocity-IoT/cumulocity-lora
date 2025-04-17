@@ -16,6 +16,7 @@ import com.cumulocity.sdk.client.inventory.InventoryApi;
 
 import c8y.Command;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.ms.CodecManager;
 import lora.ns.connector.LNSConnectorService;
@@ -25,6 +26,7 @@ import lora.rest.LoraContextService;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LNSOperationService {
 
 	private static final String DOWNLINKS = "downlinks";
@@ -82,16 +84,18 @@ public class LNSOperationService {
 	}
 
 	public void processOperation(String lnsConnectorId, DownlinkData operation, OperationRepresentation c8yOperation) {
+		log.info("Processing operation {} for connector {} in tenant {}", operation, lnsConnectorId, subscriptionsService.getTenant());
 		try {
 			String commandId = lnsConnectorManager.getConnector(lnsConnectorId).sendDownlink(operation);
 			if (commandId != null) {
+				log.info("Operation sent successfully to LNS with command Id {}", commandId);
 				storeOperation(lnsConnectorId, c8yOperation, commandId);
 			} else {
 				loraContextService.log("Operation {} status won't be updated as no correlation Id was sent by LNS.",
 						operation);
 			}
 		} catch (Exception e) {
-			loraContextService.log("Unable to send downlink", e);
+			loraContextService.error("Unable to send downlink", e);
 			c8yOperation.setStatus(OperationStatus.FAILED.toString());
 			c8yOperation.setFailureReason(e.getMessage());
 			Command command = c8yOperation.get(Command.class);
