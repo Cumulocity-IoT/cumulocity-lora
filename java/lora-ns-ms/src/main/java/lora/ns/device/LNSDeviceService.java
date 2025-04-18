@@ -285,7 +285,7 @@ public class LNSDeviceService {
 		if (validationResult.isOk()) {
 			try {
 				connector.provisionDevice(deviceProvisioning);
-				mor = createDevice(lnsConnectorId, deviceProvisioning.getName(), deviceProvisioning.getDevEUI());
+				mor = getOrCreateDevice(lnsConnectorId, deviceProvisioning.getDevEUI());
 				mor = initDevice(mor, deviceProvisioning);
 			} catch (Exception e) {
 				throw new CannotProvisionDeviceException(deviceProvisioning.getDevEUI(), e);
