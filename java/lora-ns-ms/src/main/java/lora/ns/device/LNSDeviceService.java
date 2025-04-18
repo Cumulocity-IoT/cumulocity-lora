@@ -158,6 +158,10 @@ public class LNSDeviceService {
 			}
 		} else {
 			result = mor.get();
+			var toUpdate = new ManagedObjectRepresentation();
+			toUpdate.setId(result.getId());
+			toUpdate.setProperty(LNSIntegrationService.LNS_CONNECTOR_REF, lnsInstanceId);
+			inventoryApi.update(toUpdate);
 			addDeviceToLNSConnector(lnsInstanceId, result);
 		}
 		loraContext.setDevice(result);
