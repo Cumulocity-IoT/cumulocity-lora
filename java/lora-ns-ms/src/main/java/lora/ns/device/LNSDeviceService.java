@@ -13,7 +13,6 @@ import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.rest.representation.measurement.MeasurementRepresentation;
 import com.cumulocity.rest.representation.operation.OperationRepresentation;
-import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.devicecontrol.DeviceControlApi;
 import com.cumulocity.sdk.client.devicecontrol.OperationCollection;
 import com.cumulocity.sdk.client.devicecontrol.OperationFilter;
@@ -21,7 +20,7 @@ import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.identity.ExternalIDCollection;
 import com.cumulocity.sdk.client.identity.IdentityApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
-import com.cumulocity.sdk.client.inventory.InventoryParam;
+import com.cumulocity.sdk.client.inventory.InventoryFilter;
 import com.cumulocity.sdk.client.inventory.ManagedObject;
 import com.cumulocity.sdk.client.measurement.MeasurementApi;
 
@@ -330,14 +329,12 @@ public class LNSDeviceService {
 		loraContextService.log("Removing device {} from LNS connector {}", mor.getId(), lnsInstanceId);
 		inventoryApi.getManagedObjectApi(GId.asGId(lnsInstanceId)).deleteChildDevice(mor.getId());
 		// Just to be sure, let's check the device as no parent connector
-		final var child = inventoryApi.get(mor.getId(), new QueryParam(InventoryParam.WITH_PARENTS, "true"));
-		if (child.getDeviceParents() != null) {
-			loraContextService.log("Device has {} parents, cleaning up any LNS connectors", child.getDeviceParents().getCount());
-			child.getDeviceParents().forEach(p -> {
-				var parent = inventoryApi.get(p.getManagedObject().getId());
-				if (parent.getType() != null && parent.getType().equals(LNSIntegrationService.LNS_CONNECTOR_TYPE)) {
-					loraContextService.log("Removing device {} from LNS connector {}", child.getId(), parent.getId());
-					inventoryApi.getManagedObjectApi(p.getManagedObject().getId()).deleteChildDevice(child.getId());
+        final var parents = inventoryApi.getManagedObjectsByFilter(InventoryFilter.searchInventory().byChildDeviceId(mor.getId())).get().allPages();
+		if (parents != null) {
+			parents.forEach(p -> {
+				if (p.getType() != null && p.getType().equals(LNSIntegrationService.LNS_CONNECTOR_TYPE)) {
+					loraContextService.log("Removing device {} from LNS connector {}", mor.getId(), p.getId());
+					inventoryApi.getManagedObjectApi(p.getId()).deleteChildDevice(mor.getId());
 				}
 			});
 		}
