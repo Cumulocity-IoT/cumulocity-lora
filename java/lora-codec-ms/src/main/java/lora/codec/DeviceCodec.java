@@ -48,6 +48,9 @@ import lora.codec.uplink.C8YData;
 import lora.codec.uplink.Decode;
 import lora.common.C8YUtils;
 import lora.common.Component;
+import lora.exception.CannotDecodePayloadException;
+import lora.exception.CannotEncodePayloadException;
+import lora.exception.DeviceNotFoundException;
 
 @EnableScheduling
 public abstract class DeviceCodec implements Component {
@@ -218,8 +221,7 @@ public abstract class DeviceCodec implements Component {
 		return currentDevice;
 	}
 
-	public Result<String> decode(Decode decode) {
-		Result<String> result = new Result<>(true, "Payload parsed with success", "OK");
+	public void decode(Decode decode) {
 		try {
 			Optional<ManagedObjectRepresentation> device = c8yUtils.getDevice(decode.getDeveui());
 			if (device.isPresent()) {
@@ -269,17 +271,16 @@ public abstract class DeviceCodec implements Component {
 						decode.getDeveui());
 				processData(decode.getDeveui(), mor, c8yData);
 			} else {
-				result = new Result<>(false, "Couldn't find device " + decode.getDeveui(), "NOK");
+				logger.error("Couldn't find device " + decode.getDeveui());
+				throw new DeviceNotFoundException(decode.getDeveui());
 			}
 		} catch (Exception e) {
 			logger.error("Couldn't decode {}", decode, e);
-			result = new Result<>(false, e.getMessage(), "Couldn't process " + decode.toString());
+			throw new CannotDecodePayloadException("Couldn't decode " + decode.toString(), e);
 		}
-		return result;
 	}
 
-	public Result<DownlinkData> encode(Encode encode) {
-		Result<DownlinkData> result = null;
+	public DownlinkData encode(Encode encode) {
 		try {
 			DownlinkData data = null;
 			Optional<ManagedObjectRepresentation> device = c8yUtils.getDevice(encode.getDevEui());
@@ -299,16 +300,14 @@ public abstract class DeviceCodec implements Component {
 					}
 				}
 				logger.info("Will send to LNS {}", data);
-				result = new Result<>(true, "Operation parsed successfully", data);
+				return data;
 			} else {
-				result = new Result<>(true, "Couldn't find device " + encode.getDevEui(), data);
+				throw new DeviceNotFoundException(encode.getDevEui());
 			}
 		} catch (Exception e) {
 			logger.error("Couldn't encode {}", encode, e);
-			result = new Result<>(false, "Couldn't process " + encode.toString(), null);
+			throw new CannotEncodePayloadException("Couldn't encode " + encode.toString(), e);
 		}
-
-		return result;
 	}
 
 	private DownlinkData encodeRaw(Encode encode, DownlinkData data) {

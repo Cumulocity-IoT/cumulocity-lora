@@ -1,5 +1,7 @@
 package lora.ns.exception;
 
+import lora.exception.LoraException;
+
 public class CannotDeprovisionDeviceException extends LoraException {
 
     public CannotDeprovisionDeviceException(String deviceEUI) {

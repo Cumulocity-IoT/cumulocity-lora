@@ -14,6 +14,8 @@ import com.cumulocity.sdk.client.SDKException;
 import feign.FeignException;
 import feign.FeignException.FeignClientException;
 import lombok.RequiredArgsConstructor;
+import lora.exception.LoraError;
+import lora.exception.LoraException;
 import lora.rest.LoraContextService;
 
 @RestControllerAdvice
@@ -32,7 +34,7 @@ public class LoraExceptionHandler {
         StringWriter detailedMessage = new StringWriter();
         e.printStackTrace(new PrintWriter(detailedMessage));
         return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(FeignClientException.class)

@@ -203,8 +203,13 @@ public class LNSDeviceService {
 		mor.set(supportedOperations);
 		mor = inventoryApi.create(mor);
 		loraContext.setDevice(mor);
-		c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, C8YUtils.DEVEUI_TYPE);
-		c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, "c8y_Serial");
+		try {
+			c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, C8YUtils.DEVEUI_TYPE);
+			c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, "c8y_Serial");
+		} catch(Exception e) {
+			loraContext.setDevice(null);
+			throw e;
+		}
 		addDeviceToLNSConnector(lnsConnectorId, mor);
 		return mor;
 	}

@@ -1,4 +1,4 @@
-package lora.ns.exception;
+package lora.exception;
 
 public class LoraException extends RuntimeException {
 

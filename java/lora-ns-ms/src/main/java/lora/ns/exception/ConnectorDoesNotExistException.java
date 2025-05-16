@@ -1,5 +1,7 @@
 package lora.ns.exception;
 
+import lora.exception.LoraException;
+
 public class ConnectorDoesNotExistException extends LoraException {
 
     public ConnectorDoesNotExistException(String loraConnectorId) {

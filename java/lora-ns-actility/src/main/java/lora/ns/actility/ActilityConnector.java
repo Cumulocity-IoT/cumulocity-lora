@@ -1,6 +1,6 @@
 package lora.ns.actility;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -40,6 +40,7 @@ import feign.slf4j.Slf4jLogger;
 import lombok.extern.slf4j.Slf4j;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.uplink.C8YData;
+import lora.exception.LoraException;
 import lora.ns.actility.api.AppServerApi;
 import lora.ns.actility.api.BaseStationApi;
 import lora.ns.actility.api.DeviceApi;
@@ -74,7 +75,6 @@ import lora.ns.actility.rest.JwtInterceptor;
 import lora.ns.connector.LNSAbstractConnector;
 import lora.ns.device.DeviceProvisioning;
 import lora.ns.device.EndDevice;
-import lora.ns.exception.LoraException;
 import lora.ns.gateway.Gateway;
 import lora.ns.gateway.GatewayProvisioning;
 

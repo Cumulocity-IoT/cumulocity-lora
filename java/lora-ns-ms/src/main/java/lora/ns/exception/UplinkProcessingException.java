@@ -1,5 +1,7 @@
 package lora.ns.exception;
 
+import lora.exception.LoraException;
+
 public class UplinkProcessingException extends LoraException {
 
     public UplinkProcessingException(String message) {

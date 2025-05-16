@@ -25,4 +25,5 @@ module lora_interface {
     exports lora.codec.uplink;
     exports lora.codec.downlink;
     exports lora.ns;
+    exports lora.exception;
 }

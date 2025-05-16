@@ -33,12 +33,13 @@ import c8y.Hardware;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lora.codec.DeviceCodecRepresentation;
-import lora.codec.Result;
 import lora.codec.downlink.DeviceOperationElement;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.downlink.Encode;
 import lora.codec.uplink.Decode;
 import lora.common.C8YUtils;
+import lora.exception.CannotDecodePayloadException;
+import lora.exception.CannotEncodePayloadException;
 import lora.ns.DeviceData;
 
 @Service
@@ -159,23 +160,25 @@ public class CodecManager {
 		getCodec(mor).ifPresent(codec -> {
 			log.info("Codec {} will be used with device {} for decoding payload {} on port {}",
 					mor.getProperty(PROPERTY_CODEC), event.getDevEui(), event.getPayload(), event.getfPort());
-			Result<String> result = codec.decode(new Decode(event));
-			if (result.isSuccess()) {
+			try {
+				codec.decode(new Decode(event));
 				eventRepresentation.setProperty(PROPERTY_PROCESSED, true);
 				eventRepresentation.setProperty(PROPERTY_STATUS, VALUE_PROCESSED);
-			} else {
+				c8yUtils.callWithoutAppContext(() -> eventApi.create(eventRepresentation));
+			} catch (CannotDecodePayloadException e) {
 				eventRepresentation.setProperty(PROPERTY_PROCESSED, false);
 				eventRepresentation.setProperty(PROPERTY_STATUS, VALUE_UNPROCESSED);
+				c8yUtils.callWithoutAppContext(() -> eventApi.create(eventRepresentation));
 				AlarmRepresentation alarm = new AlarmRepresentation();
 				alarm.setSource(mor);
 				alarm.setType(LORA_DEVICE_PAYLOAD_ERROR);
-				alarm.setText(result.getMessage() != null ? result.getMessage() : result.getResponse());
+				alarm.setText(e.getMessage());
 				alarm.setDateTime(new DateTime());
 				alarm.setSeverity(CumulocitySeverities.CRITICAL.name());
 				alarmApi.create(alarm);
+				throw e;
 			}
 		});
-		c8yUtils.callWithoutAppContext(() -> eventApi.create(eventRepresentation));
 	}
 
 	public DownlinkData encode(String devEui, OperationRepresentation operation) {
@@ -191,23 +194,19 @@ public class CodecManager {
 			}
 			log.info("Codec {} will be used with device {} for encoding operation {}", mor.getProperty(PROPERTY_CODEC),
 					devEui, command);
-			Result<DownlinkData> result = codec
-					.encode(new Encode(devEui, command, hardware != null ? hardware.getModel() : null));
-			if (result.isSuccess()) {
-				if (result.getResponse() != null) {
-					log.info("Result of command \"{}\" is payload {}", command, result.getResponse().getPayload());
-				} else {
-					log.info("Result of command \"{}\" is empty", command);
-				}
-				data[0] = result.getResponse();
-			} else {
+			try {
+				data[0] = codec.encode(new Encode(devEui, command, hardware != null ? hardware.getModel() : null));
+				log.info("Result of command \"{}\" is payload {}", command, data[0].getPayload());
+			} catch (CannotEncodePayloadException e) {
+				log.error(e.getMessage());
 				AlarmRepresentation alarm = new AlarmRepresentation();
 				alarm.setSource(mor);
 				alarm.setType(LORA_DEVICE_COMMAND_ERROR);
-				alarm.setText(result.getMessage());
+				alarm.setText(e.getMessage());
 				alarm.setDateTime(new DateTime());
 				alarm.setSeverity(CumulocitySeverities.CRITICAL.name());
 				alarmApi.create(alarm);
+				throw e;
 			}
 		});
 		return data[0];

@@ -15,12 +15,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.UnknownContentTypeException;
 
 import lombok.extern.slf4j.Slf4j;
-import lora.codec.Result;
 import lora.codec.downlink.DeviceOperationElement;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.downlink.Encode;
 import lora.codec.uplink.Decode;
 import lora.common.Component;
+import lora.exception.CannotDecodePayloadException;
+import lora.exception.CannotEncodePayloadException;
 
 @Slf4j
 public class CodecProxy implements Component {
@@ -60,66 +61,54 @@ public class CodecProxy implements Component {
 		return version;
 	}
 
-	public Result<DownlinkData> encode(Encode data) {
-		Result<DownlinkData> result = null;
+	public DownlinkData encode(Encode data) throws CannotEncodePayloadException {
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set(HttpHeaders.AUTHORIZATION, authentication);
 			headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 			headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-			ResponseEntity<Result<DownlinkData>> response = restTemplate.exchange(
+			ResponseEntity<DownlinkData> response = restTemplate.exchange(
 					System.getenv(C8Y_BASEURL) + SERVICE_LORA_CODEC + id + "/encode", HttpMethod.POST,
-					new HttpEntity<Encode>(data, headers), new ParameterizedTypeReference<Result<DownlinkData>>() {
-					});
+					new HttpEntity<Encode>(data, headers), DownlinkData.class);
 			log.info("Answer of encoder is {} with content {}", response.getStatusCode(), response.getBody());
-			result = response.getBody();
+			return response.getBody();
 		} catch (RestClientResponseException e) {
-			e.printStackTrace();
 			log.error(e.getResponseBodyAsString());
-			result = new Result<>(false, e.getResponseBodyAsString(), null);
+			throw new CannotEncodePayloadException(e.getResponseBodyAsString(), e);
 		} catch (UnknownContentTypeException e) {
-			e.printStackTrace();
 			log.error(e.getResponseBodyAsString());
-			result = new Result<>(false, e.getResponseBodyAsString(), null);
+			throw new CannotEncodePayloadException(e.getResponseBodyAsString(), e);
 		} catch (ResourceAccessException e) {
-			e.printStackTrace();
-			result = new Result<>(false, e.getMessage(), null);
+			log.error(e.getMessage());
+			throw new CannotEncodePayloadException(e.getMessage(), e);
 		}
-		return result;
 	}
 
 	public void setAuthentication(String authentication) {
 		this.authentication = authentication;
 	}
 
-	public Result<String> decode(Decode data) {
-		Result<String> result = null;
+	public void decode(Decode data) throws CannotDecodePayloadException {
 		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set(HttpHeaders.AUTHORIZATION, authentication);
 			headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-			ResponseEntity<Result<String>> response = restTemplate.exchange(
+			ResponseEntity<Void> response = restTemplate.exchange(
 					System.getenv(C8Y_BASEURL) + SERVICE_LORA_CODEC + id + "/decode", HttpMethod.POST,
-					new HttpEntity<Decode>(data, headers), new ParameterizedTypeReference<Result<String>>() {
-					});
-			result = response.getBody();
-			log.info("Answer of decoder is {} with content {}", response.getStatusCode(),
-					result != null ? result.getResponse() : "");
+					new HttpEntity<Decode>(data, headers), Void.class);
+			log.info("Answer of decoder is {}", response.getStatusCode());
 		} catch (RestClientResponseException e) {
-			e.printStackTrace();
 			log.error(e.getResponseBodyAsString());
-			result = new Result<>(false, e.getResponseBodyAsString(), null);
+			throw new CannotDecodePayloadException(e.getResponseBodyAsString(), e);
 		} catch (UnknownContentTypeException e) {
-			e.printStackTrace();
 			log.error(e.getResponseBodyAsString());
-			result = new Result<>(false, e.getResponseBodyAsString(), null);
+			throw new CannotDecodePayloadException(e.getResponseBodyAsString(), e);
 		} catch (ResourceAccessException e) {
-			e.printStackTrace();
-			result = new Result<>(false, e.getMessage(), null);
+			log.error(e.getMessage());
+			throw new CannotDecodePayloadException(e.getMessage(), e);
 		}
-		return result;
 	}
 
 	public Map<String, DeviceOperationElement> getAvailableOperations(String model) {

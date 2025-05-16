@@ -12,7 +12,7 @@ import com.cumulocity.model.event.CumulocitySeverities;
 
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
-import lora.ns.exception.LoraError;
+import lora.exception.LoraError;
 import lora.rest.LoraContextService;
 
 @RestControllerAdvice

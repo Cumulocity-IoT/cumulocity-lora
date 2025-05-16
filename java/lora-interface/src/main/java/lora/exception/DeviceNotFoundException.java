@@ -1,6 +1,4 @@
-package lora.ns.exception;
-
-import lora.exception.LoraException;
+package lora.exception;
 
 public class DeviceNotFoundException extends LoraException {
 

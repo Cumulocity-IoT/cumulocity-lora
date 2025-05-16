@@ -1,4 +1,4 @@
-package lora.ns.exception;
+package lora.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
