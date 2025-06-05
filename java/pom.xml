@@ -181,6 +181,7 @@
         <module>lora-ns-generic</module>
         <module>lora-ns-liveobjects</module>
         <module>lora-ns-chirpstack</module>
+        <module>lora-ns-netmore</module>
       </modules>
     </profile>
   </profiles>

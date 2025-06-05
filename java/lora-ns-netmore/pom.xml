@@ -12,7 +12,7 @@
 		<version>1.1.9-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>lora-ns-liveobjects</artifactId>
+	<artifactId>lora-ns-netmore</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -20,9 +20,25 @@
 			<artifactId>lora-ns-ms</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- Feign dependencies -->
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-core</artifactId>
+			<version>12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-gson</artifactId>
+			<version>12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-slf4j</artifactId>
+			<version>12.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
