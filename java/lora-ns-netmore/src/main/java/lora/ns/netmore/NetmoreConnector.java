@@ -46,14 +46,15 @@ import lora.ns.netmore.rest.model.Device;
 import lora.ns.netmore.rest.model.DeviceGroup;
 import lora.ns.netmore.rest.model.ExportConfig;
 import lora.ns.netmore.rest.model.ExportConfigType;
+import lora.ns.netmore.rest.model.ExportMessageFormats;
 import lora.ns.netmore.rest.model.GatewayGroup;
 import lora.ns.netmore.rest.model.GatewayType;
-import lora.ns.netmore.rest.model.HttpPushExportConfig;
 import lora.ns.netmore.rest.model.HttpPushExportConfigHeadersInner;
 import lora.ns.netmore.rest.model.LoraVersion;
 import lora.ns.netmore.rest.model.ModelClass;
 import lora.ns.netmore.rest.model.PatchDeviceRequest;
 import lora.ns.netmore.rest.model.PatchGatewayRequest;
+import lora.ns.netmore.rest.model.UpdateExportConfigRequest;
 
 public class NetmoreConnector extends LNSAbstractConnector {
 
@@ -145,25 +146,50 @@ public class NetmoreConnector extends LNSAbstractConnector {
     public void configureRoutings(String url, String tenant, String login, String password) {
         String customerId = getProperty("customerId").get().toString();
 
-        getProperty("exportConfigId").ifPresentOrElse(o -> {
+        getProperty("uplinkExportConfigId").ifPresentOrElse(o -> {
             ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
-            exportConfig.setConfig(new HttpPushExportConfig()
-                    .url(url)
-                    .headers(List.of(new HttpPushExportConfigHeadersInner()
-                            .name("Authorization")
-                            .value("Basic "
-                                    + Base64.getEncoder().encodeToString((login + ":" + password).getBytes())))));
+            ExportConfigType exportConfigType = new ExportConfigType()
+            .url(url + "/uplink")
+            .headers(List.of(new HttpPushExportConfigHeadersInner()
+                    .name("Authorization")
+                    .value("Basic "
+                            + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
+            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(), new UpdateExportConfigRequest().config(exportConfigType));
         }, () -> {
             ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
                     .name("Cumulocity " + tenant)
                     .exportType(ExportTypeEnum.HTTP_PUSH)
+                    .messageFormats(new ExportMessageFormats().uplink(true))
                     .config(new ExportConfigType()
                             .url(url)
                             .headers(List.of(new HttpPushExportConfigHeadersInner()
                                     .name("Authorization")
                                     .value("Basic " + Base64.getEncoder()
                                             .encodeToString((login + ":" + password).getBytes()))))));
-            setProperty("exportConfigId", exportConfig.getExportConfigId());
+            setProperty("uplinkExportConfigId", exportConfig.getExportConfigId());
+        });
+
+        getProperty("downlinkExportConfigId").ifPresentOrElse(o -> {
+            ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
+            ExportConfigType exportConfigType = new ExportConfigType()
+            .url(url + "/downlink")
+            .headers(List.of(new HttpPushExportConfigHeadersInner()
+                    .name("Authorization")
+                    .value("Basic "
+                            + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
+            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(), new UpdateExportConfigRequest().config(exportConfigType));
+        }, () -> {
+            ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
+                    .name("Cumulocity " + tenant)
+                    .exportType(ExportTypeEnum.HTTP_PUSH)
+                    .messageFormats(new ExportMessageFormats().downlink(true))
+                    .config(new ExportConfigType()
+                            .url(url)
+                            .headers(List.of(new HttpPushExportConfigHeadersInner()
+                                    .name("Authorization")
+                                    .value("Basic " + Base64.getEncoder()
+                                            .encodeToString((login + ":" + password).getBytes()))))));
+            setProperty("downlinkExportConfigId", exportConfig.getExportConfigId());
         });
     }
 
