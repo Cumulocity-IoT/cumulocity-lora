@@ -1,6 +1,7 @@
 package lora.ns.netmore;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -29,6 +30,7 @@ import lora.ns.gateway.Gateway;
 import lora.ns.gateway.GatewayProvisioning;
 import lora.ns.netmore.rest.DeviceGroupsApi;
 import lora.ns.netmore.rest.DevicesApi;
+import lora.ns.netmore.rest.ExportConfigGroupsApi;
 import lora.ns.netmore.rest.ExportConfigsApi;
 import lora.ns.netmore.rest.GatewayGroupsApi;
 import lora.ns.netmore.rest.GatewayTypesApi;
@@ -37,6 +39,7 @@ import lora.ns.netmore.rest.LoRaWanDevicesApi;
 import lora.ns.netmore.rest.LoRaWanGatewaysApi;
 import lora.ns.netmore.rest.model.ActivationMethod;
 import lora.ns.netmore.rest.model.CreateDeviceRequest;
+import lora.ns.netmore.rest.model.CreateExportConfigGroupRequest;
 import lora.ns.netmore.rest.model.CreateExportConfigRequest;
 import lora.ns.netmore.rest.model.CreateExportConfigRequest.ExportTypeEnum;
 import lora.ns.netmore.rest.model.CreateGatewayRequest;
@@ -45,6 +48,7 @@ import lora.ns.netmore.rest.model.CreateLoraGateway;
 import lora.ns.netmore.rest.model.Device;
 import lora.ns.netmore.rest.model.DeviceGroup;
 import lora.ns.netmore.rest.model.ExportConfig;
+import lora.ns.netmore.rest.model.ExportConfigGroup;
 import lora.ns.netmore.rest.model.ExportConfigType;
 import lora.ns.netmore.rest.model.ExportMessageFormats;
 import lora.ns.netmore.rest.model.GatewayGroup;
@@ -66,6 +70,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
     private LoRaWanDevicesApi loRaWanDevicesApi;
     private LoRaWanGatewaysApi loRaWanGatewaysApi;
     private ExportConfigsApi exportConfigsApi;
+    private ExportConfigGroupsApi exportConfigGroupsApi;
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JodaModule())
@@ -105,6 +110,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
         gatewaysApi = feignBuilder.target(GatewaysApi.class, baseUrl);
         loRaWanDevicesApi = feignBuilder.target(LoRaWanDevicesApi.class, baseUrl);
         loRaWanGatewaysApi = feignBuilder.target(LoRaWanGatewaysApi.class, baseUrl);
+        exportConfigGroupsApi = feignBuilder.target(ExportConfigGroupsApi.class, baseUrl);
     }
 
     @Override
@@ -127,19 +133,24 @@ public class NetmoreConnector extends LNSAbstractConnector {
 
     @Override
     public void provisionDevice(DeviceProvisioning deviceProvisioning) {
-        String customerId = getProperty("customerId").get().toString();
-        String deviceGroupId = getProperty("deviceGroupId").get().toString();
-        CreateDeviceRequest createDeviceRequest = new CreateDeviceRequest()
-                .loraDevice(new CreateLoraDevice()
-                        .devEui(deviceProvisioning.getDevEUI())
-                        .appKey(deviceProvisioning.getAppKey())
-                        .appEui(deviceProvisioning.getAppEUI())
-                        .propertyClass(ModelClass.fromValue(deviceProvisioning.getDeviceClass().name()))
-                        .loraVersion(LoraVersion.V100)
-                        .activationMethod(ActivationMethod.OTAA))
-                .name(deviceProvisioning.getName());
-
-        devicesApi.createDevice(customerId, deviceGroupId, createDeviceRequest);
+        getProperty("exportConfigGroupId").ifPresentOrElse(o -> {
+            String customerId = getProperty("customerId").get().toString();
+            String deviceGroupId = getProperty("deviceGroupId").get().toString();
+            CreateDeviceRequest createDeviceRequest = new CreateDeviceRequest()
+                    .loraDevice(new CreateLoraDevice()
+                            .devEui(deviceProvisioning.getDevEUI())
+                            .appKey(deviceProvisioning.getAppKey())
+                            .appEui(deviceProvisioning.getAppEUI())
+                            .propertyClass(ModelClass.fromValue(deviceProvisioning.getDeviceClass().name()))
+                            .loraVersion(LoraVersion.V100)
+                            .activationMethod(ActivationMethod.OTAA))
+                    .name(deviceProvisioning.getName())
+                    .exportConfigGroupId(getProperty("exportConfigGroupId").get().toString());
+    
+            devicesApi.createDevice(customerId, deviceGroupId, createDeviceRequest);
+        }, () -> {
+            throw new InvalidParameterException("Export config group id is not set");
+        });
     }
 
     @Override
@@ -149,12 +160,13 @@ public class NetmoreConnector extends LNSAbstractConnector {
         getProperty("uplinkExportConfigId").ifPresentOrElse(o -> {
             ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
             ExportConfigType exportConfigType = new ExportConfigType()
-            .url(url + "/uplink")
-            .headers(List.of(new HttpPushExportConfigHeadersInner()
-                    .name("Authorization")
-                    .value("Basic "
-                            + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
-            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(), new UpdateExportConfigRequest().config(exportConfigType));
+                    .url(url + "/uplink")
+                    .headers(List.of(new HttpPushExportConfigHeadersInner()
+                            .name("Authorization")
+                            .value("Basic "
+                                    + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
+            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(),
+                    new UpdateExportConfigRequest().config(exportConfigType));
         }, () -> {
             ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
                     .name("Cumulocity " + tenant)
@@ -172,17 +184,18 @@ public class NetmoreConnector extends LNSAbstractConnector {
         getProperty("downlinkExportConfigId").ifPresentOrElse(o -> {
             ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
             ExportConfigType exportConfigType = new ExportConfigType()
-            .url(url + "/downlink")
-            .headers(List.of(new HttpPushExportConfigHeadersInner()
-                    .name("Authorization")
-                    .value("Basic "
-                            + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
-            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(), new UpdateExportConfigRequest().config(exportConfigType));
+                    .url(url + "/downlink")
+                    .headers(List.of(new HttpPushExportConfigHeadersInner()
+                            .name("Authorization")
+                            .value("Basic "
+                                    + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
+            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(),
+                    new UpdateExportConfigRequest().config(exportConfigType));
         }, () -> {
             ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
                     .name("Cumulocity " + tenant)
                     .exportType(ExportTypeEnum.HTTP_PUSH)
-                    .messageFormats(new ExportMessageFormats().downlink(true))
+                    .messageFormats(new ExportMessageFormats().downlink(true).downlinkFailed(true))
                     .config(new ExportConfigType()
                             .url(url)
                             .headers(List.of(new HttpPushExportConfigHeadersInner()
@@ -190,6 +203,16 @@ public class NetmoreConnector extends LNSAbstractConnector {
                                     .value("Basic " + Base64.getEncoder()
                                             .encodeToString((login + ":" + password).getBytes()))))));
             setProperty("downlinkExportConfigId", exportConfig.getExportConfigId());
+        });
+
+        getProperty("exportConfigGroupId").ifPresentOrElse(o -> {
+        }, () -> {
+            ExportConfigGroup group = exportConfigGroupsApi.createExportConfigGroup(customerId,
+                    new CreateExportConfigGroupRequest().name("Cumulocity " + tenant)
+                            .addExportConfigsItem(getProperty("uplinkExportConfigId").get().toString())
+                            .addExportConfigsItem(getProperty("downlinkExportConfigId").get().toString()));
+
+            setProperty("exportConfigGroupId", group.getExportConfigGroupId());
         });
     }
 
@@ -206,7 +229,8 @@ public class NetmoreConnector extends LNSAbstractConnector {
     public List<Gateway> getGateways() {
         String customerId = getProperty("customerId").get().toString();
         return gatewaysApi.getAllByCustomer(customerId).stream().filter(gateway -> gateway.getLoraGateway() != null)
-                .map(gateway -> new Gateway(gateway.getLoraGwEui(), loRaWanGatewaysApi.getLoraGateway(gateway.getLoraGwEui()).getSerialNumber(), gateway.getName(),
+                .map(gateway -> new Gateway(gateway.getLoraGwEui(),
+                        loRaWanGatewaysApi.getLoraGateway(gateway.getLoraGwEui()).getSerialNumber(), gateway.getName(),
                         BigDecimal.valueOf(gateway.getLocation().getLatitude()),
                         BigDecimal.valueOf(gateway.getLocation().getLongitude()), gateway.getGatewayTypeId(),
                         gateway.getLoraGateway().getActive() ? ConnectionState.AVAILABLE : ConnectionState.UNAVAILABLE,
