@@ -18,9 +18,11 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import c8y.ConnectionState;
 import feign.Feign;
+import feign.FeignException.FeignClientException;
 import feign.Logger.Level;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
 import lora.codec.downlink.DownlinkData;
 import lora.ns.connector.LNSAbstractConnector;
@@ -58,6 +60,7 @@ import lora.ns.netmore.rest.model.LoraVersion;
 import lora.ns.netmore.rest.model.ModelClass;
 import lora.ns.netmore.rest.model.PatchDeviceRequest;
 import lora.ns.netmore.rest.model.PatchGatewayRequest;
+import lora.ns.netmore.rest.model.UpdateExportConfigGroupRequest;
 import lora.ns.netmore.rest.model.UpdateExportConfigRequest;
 
 public class NetmoreConnector extends LNSAbstractConnector {
@@ -96,6 +99,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
         String baseUrl = "https://api.connect.netmoregroup.com/api/v1";
 
         var feignBuilder = Feign.builder()
+                .client(new OkHttpClient())
                 .decoder(new JacksonDecoder(objectMapper))
                 .encoder(new JacksonEncoder(objectMapper))
                 .logger(new Slf4jLogger("lora.ns.netmore"))
@@ -135,7 +139,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
     public void provisionDevice(DeviceProvisioning deviceProvisioning) {
         getProperty("exportConfigGroupId").ifPresentOrElse(o -> {
             String customerId = getProperty("customerId").get().toString();
-            String deviceGroupId = getProperty("deviceGroupId").get().toString();
+            String deviceGroupId = deviceProvisioning.getAdditionalProperties().get("deviceGroupId").toString();
             CreateDeviceRequest createDeviceRequest = new CreateDeviceRequest()
                     .loraDevice(new CreateLoraDevice()
                             .devEui(deviceProvisioning.getDevEUI())
@@ -146,7 +150,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
                             .activationMethod(ActivationMethod.OTAA))
                     .name(deviceProvisioning.getName())
                     .exportConfigGroupId(getProperty("exportConfigGroupId").get().toString());
-    
+
             devicesApi.createDevice(customerId, deviceGroupId, createDeviceRequest);
         }, () -> {
             throw new InvalidParameterException("Export config group id is not set");
@@ -157,63 +161,77 @@ public class NetmoreConnector extends LNSAbstractConnector {
     public void configureRoutings(String url, String tenant, String login, String password) {
         String customerId = getProperty("customerId").get().toString();
 
-        getProperty("uplinkExportConfigId").ifPresentOrElse(o -> {
-            ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
-            ExportConfigType exportConfigType = new ExportConfigType()
-                    .url(url + "/uplink")
-                    .headers(List.of(new HttpPushExportConfigHeadersInner()
-                            .name("Authorization")
-                            .value("Basic "
-                                    + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
-            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(),
-                    new UpdateExportConfigRequest().config(exportConfigType));
-        }, () -> {
-            ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
-                    .name("Cumulocity " + tenant)
-                    .exportType(ExportTypeEnum.HTTP_PUSH)
-                    .messageFormats(new ExportMessageFormats().uplink(true))
-                    .config(new ExportConfigType()
-                            .url(url)
-                            .headers(List.of(new HttpPushExportConfigHeadersInner()
-                                    .name("Authorization")
-                                    .value("Basic " + Base64.getEncoder()
-                                            .encodeToString((login + ":" + password).getBytes()))))));
-            setProperty("uplinkExportConfigId", exportConfig.getExportConfigId());
-        });
+        updateOrCreateExportConfig(url, tenant, login, password, customerId, "uplink");
 
-        getProperty("downlinkExportConfigId").ifPresentOrElse(o -> {
-            ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
-            ExportConfigType exportConfigType = new ExportConfigType()
-                    .url(url + "/downlink")
-                    .headers(List.of(new HttpPushExportConfigHeadersInner()
-                            .name("Authorization")
-                            .value("Basic "
-                                    + Base64.getEncoder().encodeToString((login + ":" + password).getBytes()))));
-            exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(),
-                    new UpdateExportConfigRequest().config(exportConfigType));
-        }, () -> {
-            ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
-                    .name("Cumulocity " + tenant)
-                    .exportType(ExportTypeEnum.HTTP_PUSH)
-                    .messageFormats(new ExportMessageFormats().downlink(true).downlinkFailed(true))
-                    .config(new ExportConfigType()
-                            .url(url)
-                            .headers(List.of(new HttpPushExportConfigHeadersInner()
-                                    .name("Authorization")
-                                    .value("Basic " + Base64.getEncoder()
-                                            .encodeToString((login + ":" + password).getBytes()))))));
-            setProperty("downlinkExportConfigId", exportConfig.getExportConfigId());
-        });
+        updateOrCreateExportConfig(url, tenant, login, password, customerId, "downlink");
 
         getProperty("exportConfigGroupId").ifPresentOrElse(o -> {
+            try {
+                exportConfigGroupsApi.getExportConfigGroup(customerId, o.toString());
+                exportConfigGroupsApi.updateExportConfigGroup(customerId, o.toString(),
+                        new UpdateExportConfigGroupRequest()
+                                .addExportConfigsItem(getProperty("uplinkExportConfigId").get().toString())
+                                .addExportConfigsItem(getProperty("downlinkExportConfigId").get().toString()));
+            } catch (FeignClientException e) {
+                if (e.status() == 404) {
+                    createExportConfigGroup(tenant, customerId);
+                } else {
+                    throw e;
+                }
+            }
         }, () -> {
-            ExportConfigGroup group = exportConfigGroupsApi.createExportConfigGroup(customerId,
-                    new CreateExportConfigGroupRequest().name("Cumulocity " + tenant)
-                            .addExportConfigsItem(getProperty("uplinkExportConfigId").get().toString())
-                            .addExportConfigsItem(getProperty("downlinkExportConfigId").get().toString()));
-
-            setProperty("exportConfigGroupId", group.getExportConfigGroupId());
+            createExportConfigGroup(tenant, customerId);
         });
+    }
+
+    private void updateOrCreateExportConfig(String url, String tenant, String login, String password, String customerId, String type) {
+        getProperty(type + "ExportConfigId").ifPresentOrElse(o -> {
+            try {
+                ExportConfig exportConfig = exportConfigsApi.getExportConfig(customerId, o.toString());
+                ExportConfigType exportConfigType = new ExportConfigType()
+                        .url(url + "/" + type)
+                        .headers(List.of(new HttpPushExportConfigHeadersInner()
+                                .name("Authorization")
+                                .value("Basic "
+                                        + Base64.getEncoder().encodeToString((tenant + "/" + login + ":" + password).getBytes()))));
+                exportConfigsApi.updateExportConfig(customerId, exportConfig.getExportConfigId(),
+                        new UpdateExportConfigRequest().config(exportConfigType).exportType(UpdateExportConfigRequest.ExportTypeEnum.HTTP_PUSH));
+            } catch (FeignClientException e) {
+                if (e.status() == 404) {
+                    createExportConfig(url, tenant, login, password, customerId, type);
+                } else {
+                    throw e;
+                }
+            }
+        }, () -> {
+            createExportConfig(url, tenant, login, password, customerId, type);
+        });
+    }
+
+    private void createExportConfigGroup(String tenant, String customerId) {
+        ExportConfigGroup group = exportConfigGroupsApi.createExportConfigGroup(customerId,
+                new CreateExportConfigGroupRequest().name("Cumulocity " + tenant)
+                        .addExportConfigsItem(getProperty("uplinkExportConfigId").get().toString())
+                        .addExportConfigsItem(getProperty("downlinkExportConfigId").get().toString()));
+
+        setProperty("exportConfigGroupId", group.getExportConfigGroupId());
+    }
+
+    private void createExportConfig(String url, String tenant, String login, String password, String customerId,
+            String type) {
+        ExportConfig exportConfig = exportConfigsApi.createExportConfig(customerId, new CreateExportConfigRequest()
+                .name("Cumulocity " + tenant + " " + type)
+                .exportType(ExportTypeEnum.HTTP_PUSH)
+                .formatCode("DEFAULT_MQ_ALL")
+                .messageFormats(new ExportMessageFormats().uplink(true))
+                .activeOnCustomer(true)
+                .config(new ExportConfigType()
+                        .url(url + "/" + type)
+                        .headers(List.of(new HttpPushExportConfigHeadersInner()
+                                .name("Authorization")
+                                .value("Basic " + Base64.getEncoder()
+                                        .encodeToString((tenant + "/" + login + ":" + password).getBytes()))))));
+        setProperty(type + "ExportConfigId", exportConfig.getExportConfigId());
     }
 
     @Override

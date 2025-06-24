@@ -14,14 +14,9 @@
 package lora.ns.netmore.rest.model;
 
 import java.util.Objects;
-import java.util.Arrays;
-import com.fasterxml.jackson.annotation.JsonInclude;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * UpdateExportMessageFormats
@@ -64,7 +59,6 @@ public class UpdateExportMessageFormats {
   **/
 
   @JsonProperty(JSON_PROPERTY_UPLINK)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getUplink() {
     return uplink;
@@ -72,7 +66,6 @@ public class UpdateExportMessageFormats {
 
 
   @JsonProperty(JSON_PROPERTY_UPLINK)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setUplink(Boolean uplink) {
     this.uplink = uplink;
   }
@@ -90,7 +83,6 @@ public class UpdateExportMessageFormats {
   **/
 
   @JsonProperty(JSON_PROPERTY_DOWNLINK)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getDownlink() {
     return downlink;
@@ -98,7 +90,6 @@ public class UpdateExportMessageFormats {
 
 
   @JsonProperty(JSON_PROPERTY_DOWNLINK)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setDownlink(Boolean downlink) {
     this.downlink = downlink;
   }
@@ -116,7 +107,6 @@ public class UpdateExportMessageFormats {
   **/
 
   @JsonProperty(JSON_PROPERTY_DOWNLINK_FAILED)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getDownlinkFailed() {
     return downlinkFailed;
@@ -124,7 +114,6 @@ public class UpdateExportMessageFormats {
 
 
   @JsonProperty(JSON_PROPERTY_DOWNLINK_FAILED)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setDownlinkFailed(Boolean downlinkFailed) {
     this.downlinkFailed = downlinkFailed;
   }
@@ -142,7 +131,6 @@ public class UpdateExportMessageFormats {
   **/
 
   @JsonProperty(JSON_PROPERTY_JOIN_REQUEST)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getJoinRequest() {
     return joinRequest;
@@ -150,7 +138,6 @@ public class UpdateExportMessageFormats {
 
 
   @JsonProperty(JSON_PROPERTY_JOIN_REQUEST)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setJoinRequest(Boolean joinRequest) {
     this.joinRequest = joinRequest;
   }
@@ -168,7 +155,6 @@ public class UpdateExportMessageFormats {
   **/
 
   @JsonProperty(JSON_PROPERTY_JOIN_ACCEPT)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getJoinAccept() {
     return joinAccept;
@@ -176,7 +162,6 @@ public class UpdateExportMessageFormats {
 
 
   @JsonProperty(JSON_PROPERTY_JOIN_ACCEPT)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setJoinAccept(Boolean joinAccept) {
     this.joinAccept = joinAccept;
   }

@@ -13,18 +13,12 @@
 
 package lora.ns.netmore.rest.model;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * UpdateExportConfigGroupRequest
@@ -59,7 +53,6 @@ public class UpdateExportConfigGroupRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getName() {
     return name;
@@ -67,7 +60,6 @@ public class UpdateExportConfigGroupRequest {
 
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setName(String name) {
     this.name = name;
   }
@@ -85,7 +77,6 @@ public class UpdateExportConfigGroupRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Boolean getAvailableToSubCustomer() {
     return availableToSubCustomer;
@@ -93,7 +84,6 @@ public class UpdateExportConfigGroupRequest {
 
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setAvailableToSubCustomer(Boolean availableToSubCustomer) {
     this.availableToSubCustomer = availableToSubCustomer;
   }
@@ -119,7 +109,6 @@ public class UpdateExportConfigGroupRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_EXPORT_CONFIGS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public List<String> getExportConfigs() {
     return exportConfigs;
@@ -127,7 +116,6 @@ public class UpdateExportConfigGroupRequest {
 
 
   @JsonProperty(JSON_PROPERTY_EXPORT_CONFIGS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setExportConfigs(List<String> exportConfigs) {
     this.exportConfigs = exportConfigs;
   }

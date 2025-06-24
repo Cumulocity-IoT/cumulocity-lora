@@ -13,25 +13,12 @@
 
 package lora.ns.netmore.rest.model;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import lora.ns.netmore.rest.model.AwsIotCoreExportConfig;
-import lora.ns.netmore.rest.model.AzureExportConfig;
-import lora.ns.netmore.rest.model.CasandraExportConfig;
-import lora.ns.netmore.rest.model.GooglePubSubExportConfig;
-import lora.ns.netmore.rest.model.HttpPushExportConfig;
-import lora.ns.netmore.rest.model.HttpPushExportConfigHeadersInner;
-import lora.ns.netmore.rest.model.MqttExportConfig;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * ExportConfigType
@@ -130,15 +117,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_URL)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getUrl() {
     return url;
   }
 
 
   @JsonProperty(JSON_PROPERTY_URL)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setUrl(String url) {
     this.url = url;
   }
@@ -156,15 +140,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_TOPIC)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getTopic() {
     return topic;
   }
 
 
   @JsonProperty(JSON_PROPERTY_TOPIC)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setTopic(String topic) {
     this.topic = topic;
   }
@@ -182,15 +163,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CA)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getCa() {
     return ca;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CA)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCa(String ca) {
     this.ca = ca;
   }
@@ -208,15 +186,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CERT)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getCert() {
     return cert;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CERT)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCert(String cert) {
     this.cert = cert;
   }
@@ -234,15 +209,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_KEY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getKey() {
     return key;
   }
 
 
   @JsonProperty(JSON_PROPERTY_KEY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setKey(String key) {
     this.key = key;
   }
@@ -260,15 +232,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CLIENT_ID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getClientId() {
     return clientId;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CLIENT_ID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setClientId(String clientId) {
     this.clientId = clientId;
   }
@@ -286,15 +255,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_PASSWORD)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getPassword() {
     return password;
   }
 
 
   @JsonProperty(JSON_PROPERTY_PASSWORD)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setPassword(String password) {
     this.password = password;
   }
@@ -312,15 +278,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_USERNAME)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getUsername() {
     return username;
   }
 
 
   @JsonProperty(JSON_PROPERTY_USERNAME)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setUsername(String username) {
     this.username = username;
   }
@@ -338,15 +301,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_QOS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Double getQos() {
     return qos;
   }
 
 
   @JsonProperty(JSON_PROPERTY_QOS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setQos(Double qos) {
     this.qos = qos;
   }
@@ -366,15 +326,12 @@ public class ExportConfigType {
   @Deprecated
 
   @JsonProperty(JSON_PROPERTY_QUIET_MODE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getQuietMode() {
     return quietMode;
   }
 
 
   @JsonProperty(JSON_PROPERTY_QUIET_MODE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setQuietMode(Boolean quietMode) {
     this.quietMode = quietMode;
   }
@@ -392,15 +349,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CLEAN_SESSION)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getCleanSession() {
     return cleanSession;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CLEAN_SESSION)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCleanSession(Boolean cleanSession) {
     this.cleanSession = cleanSession;
   }
@@ -418,15 +372,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_HTTPS_HOSTNAME_VERIFICATION_ENABLED)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getHttpsHostnameVerificationEnabled() {
     return httpsHostnameVerificationEnabled;
   }
 
 
   @JsonProperty(JSON_PROPERTY_HTTPS_HOSTNAME_VERIFICATION_ENABLED)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setHttpsHostnameVerificationEnabled(Boolean httpsHostnameVerificationEnabled) {
     this.httpsHostnameVerificationEnabled = httpsHostnameVerificationEnabled;
   }
@@ -444,15 +395,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_KEYSPACE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getKeyspace() {
     return keyspace;
   }
 
 
   @JsonProperty(JSON_PROPERTY_KEYSPACE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setKeyspace(String keyspace) {
     this.keyspace = keyspace;
   }
@@ -470,15 +418,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_DATACENTER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getDatacenter() {
     return datacenter;
   }
 
 
   @JsonProperty(JSON_PROPERTY_DATACENTER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setDatacenter(String datacenter) {
     this.datacenter = datacenter;
   }
@@ -496,15 +441,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CERTIFICATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getCertificate() {
     return certificate;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CERTIFICATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCertificate(String certificate) {
     this.certificate = certificate;
   }
@@ -530,15 +472,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_HEADERS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public List<HttpPushExportConfigHeadersInner> getHeaders() {
     return headers;
   }
 
 
   @JsonProperty(JSON_PROPERTY_HEADERS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setHeaders(List<HttpPushExportConfigHeadersInner> headers) {
     this.headers = headers;
   }
@@ -556,15 +495,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_SHARED_ACCESS_KEY)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getSharedAccessKey() {
     return sharedAccessKey;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SHARED_ACCESS_KEY)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setSharedAccessKey(String sharedAccessKey) {
     this.sharedAccessKey = sharedAccessKey;
   }
@@ -582,15 +518,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_SHARED_ACCESS_KEY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getSharedAccessKeyName() {
     return sharedAccessKeyName;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SHARED_ACCESS_KEY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setSharedAccessKeyName(String sharedAccessKeyName) {
     this.sharedAccessKeyName = sharedAccessKeyName;
   }
@@ -608,15 +541,12 @@ public class ExportConfigType {
   **/
 
   @JsonProperty(JSON_PROPERTY_CREDENTIALS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getCredentials() {
     return credentials;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CREDENTIALS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setCredentials(String credentials) {
     this.credentials = credentials;
   }

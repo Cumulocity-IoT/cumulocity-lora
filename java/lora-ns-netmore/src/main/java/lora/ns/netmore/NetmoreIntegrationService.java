@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 
+import lombok.extern.slf4j.Slf4j;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
@@ -24,13 +25,14 @@ import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
 @Service
+@Slf4j
 public class NetmoreIntegrationService extends LNSIntegrationService<NetmoreConnector> {
 
     {
         wizard.add(new LNSConnectorWizardStep() {
 
             private final List<PropertyDescription> propertyDescriptions = List.of(
-                PropertyDescription.text("apiKey", "API Key", true).withEncrypted(true),
+                PropertyDescription.password("apiKey", "API Key"),
                 PropertyDescription.text("customerId", "Customer ID", true)
             );
     
@@ -67,6 +69,10 @@ public class NetmoreIntegrationService extends LNSIntegrationService<NetmoreConn
 
     @Override
     public DeviceData processUplinkEvent(String event) throws IOException {
+        if (event.equals("{}")) {
+            log.info("Received empty event");
+            return null;
+        }
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode rootNode;
 		rootNode = mapper.readTree(event);
@@ -116,13 +122,12 @@ public class NetmoreIntegrationService extends LNSIntegrationService<NetmoreConn
 
     @Override
     public OperationData processDownlinkEvent(String eventString) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'processDownlinkEvent'");
+        log.info("Received {} but don't know yet what to do with it...", eventString);
+        return new OperationData();
     }
 
     @Override
     public boolean isOperationUpdate(String eventString) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isOperationUpdate'");
+        return false;
     }
 }

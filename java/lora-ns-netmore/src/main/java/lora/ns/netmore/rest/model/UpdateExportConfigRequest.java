@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -127,15 +126,13 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
+  
   public String getName() {
     return name;
   }
 
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setName(String name) {
     this.name = name;
   }
@@ -153,15 +150,13 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_EXPORT_TYPE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
+  
   public ExportTypeEnum getExportType() {
     return exportType;
   }
 
 
   @JsonProperty(JSON_PROPERTY_EXPORT_TYPE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setExportType(ExportTypeEnum exportType) {
     this.exportType = exportType;
   }
@@ -179,8 +174,6 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_CONFIG)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public ExportConfigType getConfig() {
     return config;
   }
@@ -202,15 +195,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_FORMAT_CODE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getFormatCode() {
     return formatCode;
   }
 
 
   @JsonProperty(JSON_PROPERTY_FORMAT_CODE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setFormatCode(String formatCode) {
     this.formatCode = formatCode;
   }
@@ -236,8 +226,6 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_FORMATTER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Map<String, FormatterValue> getFormatter() {
     return formatter;
   }
@@ -260,15 +248,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_MESSAGE_FORMATS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public UpdateExportMessageFormats getMessageFormats() {
     return messageFormats;
   }
 
 
   @JsonProperty(JSON_PROPERTY_MESSAGE_FORMATS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setMessageFormats(UpdateExportMessageFormats messageFormats) {
     this.messageFormats = messageFormats;
   }
@@ -286,15 +271,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getActiveOnCustomer() {
     return activeOnCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setActiveOnCustomer(Boolean activeOnCustomer) {
     this.activeOnCustomer = activeOnCustomer;
   }
@@ -312,15 +294,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getActiveOnSubCustomer() {
     return activeOnSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setActiveOnSubCustomer(Boolean activeOnSubCustomer) {
     this.activeOnSubCustomer = activeOnSubCustomer;
   }
@@ -338,15 +317,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getAvailableToSubCustomer() {
     return availableToSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setAvailableToSubCustomer(Boolean availableToSubCustomer) {
     this.availableToSubCustomer = availableToSubCustomer;
   }
@@ -364,15 +340,12 @@ public class UpdateExportConfigRequest {
   **/
 
   @JsonProperty(JSON_PROPERTY_VISIBLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Boolean getVisibleToSubCustomer() {
     return visibleToSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_VISIBLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setVisibleToSubCustomer(Boolean visibleToSubCustomer) {
     this.visibleToSubCustomer = visibleToSubCustomer;
   }

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Gateway.JSON_PROPERTY_LAST_UPDATED,
   Gateway.JSON_PROPERTY_LAST_UPDATED_BY
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Gateway {
   public static final String JSON_PROPERTY_GATEWAY_ID = "gatewayId";
   private String gatewayId;

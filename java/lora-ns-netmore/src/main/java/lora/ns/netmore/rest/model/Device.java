@@ -18,6 +18,7 @@ import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Device.JSON_PROPERTY_LAST_UPDATED_BY,
   Device.JSON_PROPERTY_EXPORT_CONFIG_GROUP_ID
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Device {
   public static final String JSON_PROPERTY_DEVICE_ID = "deviceId";
   private String deviceId;

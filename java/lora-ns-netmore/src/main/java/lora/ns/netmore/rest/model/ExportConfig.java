@@ -13,20 +13,12 @@
 
 package lora.ns.netmore.rest.model;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
-import lora.ns.netmore.rest.model.ExportFormatData;
-import lora.ns.netmore.rest.model.ExportMessageFormats;
-import lora.ns.netmore.rest.model.FormatterValue;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * ExportConfig
@@ -113,15 +105,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_EXPORT_TYPE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getExportType() {
     return exportType;
   }
 
 
   @JsonProperty(JSON_PROPERTY_EXPORT_TYPE)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setExportType(String exportType) {
     this.exportType = exportType;
   }
@@ -139,15 +128,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_EXPORT_FORMAT)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public ExportFormatData getExportFormat() {
     return exportFormat;
   }
 
 
   @JsonProperty(JSON_PROPERTY_EXPORT_FORMAT)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setExportFormat(ExportFormatData exportFormat) {
     this.exportFormat = exportFormat;
   }
@@ -165,7 +151,6 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public String getName() {
     return name;
@@ -173,7 +158,6 @@ public class ExportConfig {
 
 
   @JsonProperty(JSON_PROPERTY_NAME)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setName(String name) {
     this.name = name;
   }
@@ -191,15 +175,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_EXPORT_CONFIG_ID)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getExportConfigId() {
     return exportConfigId;
   }
 
 
   @JsonProperty(JSON_PROPERTY_EXPORT_CONFIG_ID)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setExportConfigId(String exportConfigId) {
     this.exportConfigId = exportConfigId;
   }
@@ -217,7 +198,6 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_CONFIG)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public Object getConfig() {
     return config;
@@ -225,7 +205,6 @@ public class ExportConfig {
 
 
   @JsonProperty(JSON_PROPERTY_CONFIG)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setConfig(Object config) {
     this.config = config;
   }
@@ -243,15 +222,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_CUSTOMER_ID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getCustomerId() {
     return customerId;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CUSTOMER_ID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCustomerId(String customerId) {
     this.customerId = customerId;
   }
@@ -277,15 +253,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_FORMATTER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public Map<String, FormatterValue> getFormatter() {
     return formatter;
   }
 
 
   @JsonProperty(JSON_PROPERTY_FORMATTER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setFormatter(Map<String, FormatterValue> formatter) {
     this.formatter = formatter;
   }
@@ -303,15 +276,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_MESSAGE_FORMATS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public ExportMessageFormats getMessageFormats() {
     return messageFormats;
   }
 
 
   @JsonProperty(JSON_PROPERTY_MESSAGE_FORMATS)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setMessageFormats(ExportMessageFormats messageFormats) {
     this.messageFormats = messageFormats;
   }
@@ -329,15 +299,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_CREATED)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getCreated() {
     return created;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CREATED)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setCreated(String created) {
     this.created = created;
   }
@@ -355,15 +322,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_LAST_UPDATED)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public String getLastUpdated() {
     return lastUpdated;
   }
 
 
   @JsonProperty(JSON_PROPERTY_LAST_UPDATED)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setLastUpdated(String lastUpdated) {
     this.lastUpdated = lastUpdated;
   }
@@ -381,15 +345,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public Boolean getActiveOnCustomer() {
     return activeOnCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setActiveOnCustomer(Boolean activeOnCustomer) {
     this.activeOnCustomer = activeOnCustomer;
   }
@@ -407,15 +368,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public Boolean getActiveOnSubCustomer() {
     return activeOnSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ACTIVE_ON_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setActiveOnSubCustomer(Boolean activeOnSubCustomer) {
     this.activeOnSubCustomer = activeOnSubCustomer;
   }
@@ -433,15 +391,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_VISIBLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public Boolean getVisibleToSubCustomer() {
     return visibleToSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_VISIBLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setVisibleToSubCustomer(Boolean visibleToSubCustomer) {
     this.visibleToSubCustomer = visibleToSubCustomer;
   }
@@ -459,15 +414,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
   public Boolean getAvailableToSubCustomer() {
     return availableToSubCustomer;
   }
 
 
   @JsonProperty(JSON_PROPERTY_AVAILABLE_TO_SUB_CUSTOMER)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setAvailableToSubCustomer(Boolean availableToSubCustomer) {
     this.availableToSubCustomer = availableToSubCustomer;
   }
@@ -485,15 +437,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_CREATED_BY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getCreatedBy() {
     return createdBy;
   }
 
 
   @JsonProperty(JSON_PROPERTY_CREATED_BY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setCreatedBy(String createdBy) {
     this.createdBy = createdBy;
   }
@@ -511,15 +460,12 @@ public class ExportConfig {
   **/
 
   @JsonProperty(JSON_PROPERTY_LAST_UPDATED_BY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
   public String getLastUpdatedBy() {
     return lastUpdatedBy;
   }
 
 
   @JsonProperty(JSON_PROPERTY_LAST_UPDATED_BY)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setLastUpdatedBy(String lastUpdatedBy) {
     this.lastUpdatedBy = lastUpdatedBy;
   }
