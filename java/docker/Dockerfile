@@ -1,7 +1,7 @@
-FROM openjdk:17-jdk-alpine3.14 AS base
+FROM eclipse-temurin:21-jdk-alpine AS base
 RUN jlink \
     --module-path /opt/java/jmods \
-    --compress=2 \
+    --compress=zip-6 \
     --add-modules java.se,jdk.unsupported,jdk.crypto.ec \
     --no-header-files \
     --no-man-pages \

@@ -11,4 +11,8 @@ echo "Proxy settings found: " $proxy_params
 
 mkdir -p /var/log/@package.name@; echo "heap dumps  /var/log/@package.name@/heap-dump-<pid>.hprof"
 
-java -XX:MinRAMPercentage=60.0 -XX:MaxRAMPercentage=90.0 -XX:+HeapDumpOnOutOfMemoryError -XshowSettings:vm ${proxy_params} -jar /data/@package.name@.jar
+java -XX:MinRAMPercentage=60.0 -XX:MaxRAMPercentage=90.0 -XX:+HeapDumpOnOutOfMemoryError -XshowSettings:vm \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.lang.invoke=ALL-UNNAMED \
+  --add-opens java.base/java.util=ALL-UNNAMED \
+  ${proxy_params} -jar /data/@package.name@.jar
