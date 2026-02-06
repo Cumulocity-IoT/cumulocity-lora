@@ -174,7 +174,7 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 			beanFactory.initializeBean(result, "connector-" + result.getId());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
+			log.error("Failed to create connector instance of type {}", instanceType.getName(), e);
 		}
 
 		return result;

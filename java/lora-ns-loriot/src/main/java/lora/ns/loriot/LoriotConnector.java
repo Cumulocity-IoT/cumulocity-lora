@@ -92,7 +92,7 @@ public class LoriotConnector extends LNSAbstractConnector {
 		serviceLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 		var feignBuilder = Feign.builder().decoder(new JacksonDecoder(objectMapper))
 						.encoder(new JacksonEncoder(objectMapper)).logger(new Slf4jLogger("lora.ns.loriot"))
-						.logLevel(Level.FULL)
+						.logLevel(Level.BASIC)
 						.requestInterceptor(template -> template.headers(Map.of("Authorization",
 										List.of("Session " + sessionId), "Content-Type", List.of("application/json"),
 										"Accept", List.of("application/json"))))
@@ -184,7 +184,7 @@ public class LoriotConnector extends LNSAbstractConnector {
 
 	@Override
 	public void configureRoutings(String url, String tenant, String login, String password) {
-		logger.info("Configuring routings to: {} with credentials: {}:{}", url, login, password);
+		logger.info("Configuring routings to: {}", url);
 		var outputs = loriotService.getOutputs(getProperties().getProperty("appid"));
 		int i = 0;
 		for (Output output : outputs) {

@@ -1,6 +1,5 @@
 package lora.codec;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +35,8 @@ import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 import com.cumulocity.sdk.client.measurement.MeasurementApi;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 
 import c8y.IsDevice;
 import lora.codec.downlink.DeviceOperation;
@@ -238,11 +238,9 @@ public abstract class DeviceCodec implements Component {
 				}
 				if (mor.hasProperty("storeLast") && mor.getProperty("storeLast").equals(true)) {
 					logger.info("Storing last measurements on device...");
-					ObjectMapper mapper = new ObjectMapper();
-					JsonNode root = mapper.readTree(mor.toJSON());
 					@SuppressWarnings("unchecked")
-					Map<String, Map<String, Map<String, Object>>> measurements = root.has("measurements")
-							? mapper.convertValue(root.at("/measurements"), Map.class)
+					Map<String, Map<String, Map<String, Object>>> measurements = mor.hasProperty("measurements")
+							? (Map<String, Map<String, Map<String, Object>>>) mor.getProperty("measurements")
 							: new HashMap<>();
 					c8yData.getMeasurements().forEach(m -> {
 						if (!measurements.containsKey(m.getType())) {
@@ -312,9 +310,14 @@ public abstract class DeviceCodec implements Component {
 
 	private DownlinkData encodeRaw(Encode encode, DownlinkData data) {
 		String[] tokens = encode.getOperation().split(" ");
+		if (tokens.length < 3) {
+			logger.error("Can't process {}. Expected syntax is \"raw <port number> <hex payload>\"",
+					encode.getOperation());
+			return data;
+		}
 		try {
 			data = new DownlinkData(encode.getDevEui(), Integer.parseInt(tokens[1]), tokens[2]);
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			logger.error("Can't process {}. Expected syntax is \"raw <port number> <hex payload>\"",
 					encode.getOperation(), e);
 		}
@@ -323,10 +326,13 @@ public abstract class DeviceCodec implements Component {
 
 	public DeviceOperation convertJsonStringToDeviceOperation(String operation) {
 		final DeviceOperation deviceOperation = new DeviceOperation();
-		ObjectMapper mapper = new ObjectMapper();
 		JsonNode root;
 		try {
-			root = mapper.readTree(operation);
+			root = JsonUtils.readTree(operation);
+			if (!root.fieldNames().hasNext()) {
+				logger.error("Empty JSON operation: {}", operation);
+				return deviceOperation;
+			}
 			String command = root.fieldNames().next();
 			deviceOperation.setId(command);
 			JsonNode elements = root.get(command);
@@ -335,7 +341,7 @@ public abstract class DeviceCodec implements Component {
 				Entry<String, JsonNode> field = fields.next();
 				deviceOperation.addElement(convertJsonNodeToDeviceOperationElement(field.getValue(), field.getKey()));
 			}
-		} catch (IOException e) {
+		} catch (IllegalArgumentException e) {
 			logger.error("Couldn't convert JSON String to operation {}", operation, e);
 		}
 

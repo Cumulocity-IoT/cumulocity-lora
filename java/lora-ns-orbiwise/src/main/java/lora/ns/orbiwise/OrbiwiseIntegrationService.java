@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
@@ -33,7 +34,7 @@ public class OrbiwiseIntegrationService extends LNSIntegrationService<OrbiwiseCo
 
 	@Override
 	public DeviceData processUplinkEvent(String event) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonUtils.getObjectMapper();
         DeviceData data = null;
         try {
             JsonNode rootNode = mapper.readTree(event);
@@ -69,7 +70,6 @@ public class OrbiwiseIntegrationService extends LNSIntegrationService<OrbiwiseCo
 
     		data = new DeviceData(deviceEui, deviceEui, null, null, fPort, payload, updateTime, measurements, lat != null ? BigDecimal.valueOf(lat) : null, lng != null ? BigDecimal.valueOf(lng) : null);
         } catch (Exception e) {
-        	e.printStackTrace();
             logger.error("Error on Mapping LoRa payload to Cumulocity", e);
         }
 		return data;
@@ -78,7 +78,7 @@ public class OrbiwiseIntegrationService extends LNSIntegrationService<OrbiwiseCo
 	@Override
 	public OperationData processDownlinkEvent(String event) {
 		OperationData data = new OperationData();
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonUtils.getObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(event);
             String commandId = rootNode.get("command_id") != null ? rootNode.get("command_id").asText() : null;

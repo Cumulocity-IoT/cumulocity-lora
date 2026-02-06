@@ -11,6 +11,8 @@ import com.cumulocity.model.event.CumulocitySeverities;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.joda.time.DateTime;
@@ -74,7 +76,7 @@ public class SenlabCodec extends DeviceCodec {
 	@Override
 	protected DownlinkData encode(ManagedObjectRepresentation mor, Encode encode) {
 		DownlinkData data = new DownlinkData();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		JsonNode root;
 		String senlabOp = null;
 		try {
@@ -93,8 +95,7 @@ public class SenlabCodec extends DeviceCodec {
 			}
 			senlabOp += "]}";
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Error parsing encode operation", e1);
 		}
 		logger.info("Will encode operation {}", senlabOp);
 		String authentication = subscriptionsService.getCredentials(subscriptionsService.getTenant()).get()
@@ -104,7 +105,7 @@ public class SenlabCodec extends DeviceCodec {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", authentication);
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-			mapper = new ObjectMapper();
+			mapper = JsonUtils.getObjectMapper();
 			ResponseEntity<String> response = restTemplate.exchange(
 					System.getenv("C8Y_BASEURL") + "/service/slcodec/" + encode.getModel() + "/encodeRequest", HttpMethod.POST,
 					new HttpEntity<String>(senlabOp, headers), String.class);
@@ -117,10 +118,9 @@ public class SenlabCodec extends DeviceCodec {
 			data.setFport(port);
 			data.setPayload(payload);
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-			logger.error(e.getResponseBodyAsString());
+			logger.error("HTTP error from Sensing Labs: {}", e.getResponseBodyAsString(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error processing Sensing Labs response", e);
 		}
 
 		return data;
@@ -150,7 +150,7 @@ public class SenlabCodec extends DeviceCodec {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", authentication);
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-			ObjectMapper mapper = new ObjectMapper();
+			ObjectMapper mapper = JsonUtils.getObjectMapper();
 			ResponseEntity<String> response = restTemplate.exchange(
 					System.getenv("C8Y_BASEURL") + "/service/slcodec/" + decode.getModel() + "/decodeMessage", HttpMethod.POST,
 					new HttpEntity<String>(message, headers), String.class);
@@ -201,10 +201,9 @@ public class SenlabCodec extends DeviceCodec {
 				}
 			});
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-			logger.error(e.getResponseBodyAsString());
+			logger.error("HTTP error from Sensing Labs: {}", e.getResponseBodyAsString(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error processing Sensing Labs response", e);
 		}
 
 		return c8yData;
@@ -222,13 +221,12 @@ public class SenlabCodec extends DeviceCodec {
 			ResponseEntity<String> response = restTemplate.exchange(
 					System.getenv("C8Y_BASEURL") + "/service/slcodec/" + model, HttpMethod.GET,
 					new HttpEntity<String>("", headers), String.class);
-			ObjectMapper mapper = new ObjectMapper();
+			ObjectMapper mapper = JsonUtils.getObjectMapper();
 			result = mapper.readTree(response.getBody());
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-			logger.error(e.getResponseBodyAsString());
+			logger.error("HTTP error from Sensing Labs: {}", e.getResponseBodyAsString(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error processing Sensing Labs response", e);
 		}
 		return result;
 	}

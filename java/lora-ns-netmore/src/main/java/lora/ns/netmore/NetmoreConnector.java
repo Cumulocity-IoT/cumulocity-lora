@@ -103,7 +103,7 @@ public class NetmoreConnector extends LNSAbstractConnector {
                 .decoder(new JacksonDecoder(objectMapper))
                 .encoder(new JacksonEncoder(objectMapper))
                 .logger(new Slf4jLogger("lora.ns.netmore"))
-                .logLevel(Level.FULL)
+                .logLevel(Level.BASIC)
                 .requestInterceptor(template -> template.header("api-key", apiKey));
 
         deviceGroupsApi = feignBuilder.target(DeviceGroupsApi.class, baseUrl);

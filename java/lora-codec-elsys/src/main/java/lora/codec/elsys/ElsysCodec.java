@@ -14,6 +14,8 @@ import com.cumulocity.model.event.CumulocitySeverities;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 import com.google.common.io.BaseEncoding;
 
 import c8y.Configuration;
@@ -543,9 +545,8 @@ public class ElsysCodec extends DeviceCodec {
 					parseCurrentSetting(buffer, map);
 				}
 				Configuration config = new Configuration();
-				ObjectMapper mapper = new ObjectMapper();
 				try {
-					config.setConfig(mapper.writeValueAsString(map));
+					config.setConfig(JsonUtils.toJson(map));
 					mor.set(config);
 					c8yData.updateRootDevice(mor);
 				} catch (Exception e) {

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 
 import lombok.extern.slf4j.Slf4j;
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
@@ -73,7 +74,7 @@ public class NetmoreIntegrationService extends LNSIntegrationService<NetmoreConn
             log.info("Received empty event");
             return null;
         }
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		JsonNode rootNode;
 		rootNode = mapper.readTree(event);
 		String devEUI = rootNode.at("/devEUI").asText();

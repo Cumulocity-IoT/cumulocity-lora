@@ -35,7 +35,6 @@ public abstract class JwtInterceptor implements RequestInterceptor {
             try {
                 decodedJwt = JWT.decode(jwt);
             } catch (Exception e) {
-                e.printStackTrace();
                 logger.error("Couldn't parse JWT", e);
             }
         }

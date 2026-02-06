@@ -11,6 +11,7 @@ module lora_interface {
     requires transitive java.client;
     requires transitive com.fasterxml.jackson.core;
     requires transitive com.fasterxml.jackson.databind;
+    requires transitive com.fasterxml.jackson.datatype.joda;
     requires transitive microservice.subscription;
     requires transitive microservice.context;
     requires transitive spring.beans;

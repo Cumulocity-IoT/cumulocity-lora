@@ -81,7 +81,7 @@ public class LiveObjectsConnector extends LNSAbstractConnector {
 				.decoder(new JacksonDecoder(objectMapper))
 				.encoder(new JacksonEncoder(objectMapper))
 				.logger(new Slf4jLogger("lora.ns.liveobjects"))
-				.logLevel(Level.FULL)
+				.logLevel(Level.BASIC)
 				.requestInterceptor(template -> template.header("X-API-KEY", properties.getProperty("apikey")));
 		addProxyConfigIfPresent(feignBuilder);
 		service = feignBuilder.target(LiveObjectsService.class, "https://liveobjects.orange-business.com/");

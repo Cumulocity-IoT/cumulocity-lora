@@ -38,6 +38,7 @@ import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.uplink.C8YData;
+import lora.common.JsonUtils;
 import lora.ns.connector.LNSAbstractConnector;
 import lora.ns.device.DeviceProvisioning;
 import lora.ns.device.EndDevice;
@@ -136,7 +137,6 @@ public class TTNConnector extends LNSAbstractConnector {
                         managedChannel = NettyChannelBuilder.forAddress(properties.getProperty("address"), 8884)
                                         .sslContext(GrpcSslContexts.forClient().ciphers(null).build()).build();
                 } catch (SSLException e) {
-                        e.printStackTrace();
                         logger.error("Can't initiate TLS connection, falling back to plain text", e);
                         managedChannel = NettyChannelBuilder.forAddress(properties.getProperty("address"), 1884)
                                         .usePlaintext()
@@ -167,7 +167,6 @@ public class TTNConnector extends LNSAbstractConnector {
                                         uplinkProcessor.processDownlinkEvent(new String(message.getPayload()));
                                 });
                         } catch (MqttException e) {
-                                e.printStackTrace();
                                 logger.error("Can't initiate MQTT connection", e);
                         }
                 }
@@ -225,7 +224,6 @@ public class TTNConnector extends LNSAbstractConnector {
                         try {
                                 mqttClient.publish(baseTopic + "/" + operation.getDevEui() + "/down/push", message);
                         } catch (MqttException e) {
-                                e.printStackTrace();
                                 logger.error("Failed to publish downlink to MQTT topic", e);
                                 throw new DownlinkProcessingException("Failed to publish downlink to MQTT topic", e);
                         }
@@ -340,8 +338,7 @@ public class TTNConnector extends LNSAbstractConnector {
                         logger.info("MQTT is enabled, skipping routing configuration");
                         return;
                 }
-                logger.info("Configuring routings to: {} with credentials: {}:{} on TTN app {}", url, login, password,
-                                properties.getProperty(APPID));
+                logger.info("Configuring routings to: {} on TTN app {}", url, properties.getProperty(APPID));
                 ApplicationWebhookRegistryBlockingStub app = ApplicationWebhookRegistryGrpc
                                 .newBlockingStub(managedChannel)
                                 .withCallCredentials(token);
@@ -443,7 +440,7 @@ public class TTNConnector extends LNSAbstractConnector {
                                 // logger.info("Gateway status: {}", stats.toString());
                                 connected = stats.hasConnectedAt();
                                 String statsJson = JsonFormat.printer().print(stats);
-                                var objectMapper = new ObjectMapper();
+                                var objectMapper = JsonUtils.getObjectMapper();
                                 properties.put("stats", objectMapper.readValue(statsJson, Map.class));
                                 if (stats.hasLastUplinkReceivedAt()) {
                                         c8yData.addMeasurement(null, "uplink", "count", "",
@@ -456,11 +453,11 @@ public class TTNConnector extends LNSAbstractConnector {
                         } catch (StatusRuntimeException e) {
                                 connected = false;
                         } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
+                                logger.error("Error parsing gateway stats protobuf", e);
                         } catch (JsonMappingException e) {
-                                e.printStackTrace();
+                                logger.error("Error mapping gateway stats JSON", e);
                         } catch (JsonProcessingException e) {
-                                e.printStackTrace();
+                                logger.error("Error processing gateway stats JSON", e);
                         }
                         return new Gateway(g.getIds().getGatewayId(), g.getIds().getGatewayId(),
                                         g.getName(),

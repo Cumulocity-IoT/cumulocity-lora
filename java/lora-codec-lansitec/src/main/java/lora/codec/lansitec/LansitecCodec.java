@@ -13,6 +13,8 @@ import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 import com.google.common.io.BaseEncoding;
 
 import org.joda.time.DateTime;
@@ -383,7 +385,7 @@ public class LansitecCodec extends DeviceCodec {
 			return askDeviceConfig(null);
 		}
 		String payload = null;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode root = mapper.readTree(encode.getOperation());
 			String command = root.fieldNames().next();

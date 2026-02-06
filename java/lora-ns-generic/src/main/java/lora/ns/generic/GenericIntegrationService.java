@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorRepresentation;
 import lora.ns.integration.LNSIntegrationService;
@@ -21,12 +22,12 @@ public class GenericIntegrationService extends LNSIntegrationService<GenericConn
     @Override
 	public DeviceData processUplinkEvent(String event) {
 		DeviceData data = null;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			UplinkEvent uplinkEvent = mapper.readValue(event, UplinkEvent.class);
 			data = new DeviceData(uplinkEvent.getDeveui(), uplinkEvent.getDeveui(), null, null, uplinkEvent.getFport(), BaseEncoding.base16().decode(uplinkEvent.getPayload().toUpperCase()), uplinkEvent.getTime(), new ArrayList<>(), null, null);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			log.error("Error parsing uplink event", e);
 		}
         return data;
     }

@@ -76,7 +76,7 @@ public class OrbiwiseConnector extends LNSAbstractConnector {
 		serviceLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 		var feignBuilder = Feign.builder().decoder(new JacksonDecoder(objectMapper))
 						.encoder(new JacksonEncoder(objectMapper)).logger(new Slf4jLogger("lora.ns.orbiwise"))
-						.logLevel(Level.FULL)
+						.logLevel(Level.BASIC)
 						.requestInterceptor(template -> template
 										.header("Authorization", "Basic " + Base64.getEncoder()
 														.encodeToString((properties.getProperty("username") + ":"
@@ -142,14 +142,14 @@ public class OrbiwiseConnector extends LNSAbstractConnector {
 
 			orbiwiseService.createHttpRouting(pushmode);
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			logger.error("Malformed URL: {}", url, e1);
 			throw new IllegalStateException(e1);
 		}
 	}
 
 	@Override
 	public void configureRoutings(String url, String tenant, String login, String password) {
-		logger.info("Configuring routings to: {} with credentials: {}:{}", url, login, password);
+		logger.info("Configuring routings to: {}", url);
 		configureRouting(url, tenant, login, password, "payloads_dl,payloads_ul");
 	}
 

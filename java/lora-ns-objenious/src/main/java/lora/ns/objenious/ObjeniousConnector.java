@@ -70,7 +70,7 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 		serviceLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 		var feignBuilder = Feign.builder().decoder(new JacksonDecoder(objectMapper))
 				.encoder(new JacksonEncoder(objectMapper)).logger(new Slf4jLogger("lora.ns.objenious"))
-				.logLevel(Level.FULL)
+				.logLevel(Level.BASIC)
 				.requestInterceptor(template -> template.headers(Map.of("apikey",
 						List.of(properties.getProperty("apikey")), "Content-Type",
 						List.of("application/json"), "Accept", List.of("application/json"))));
@@ -151,14 +151,14 @@ public class ObjeniousConnector extends LNSAbstractConnector {
 
 	@Override
 	public void configureRoutings(String url, String tenant, String login, String password) {
-		logger.info("Configuring routings to: {} with credentials: {}:{}", url, login, password);
+		logger.info("Configuring routings to: {}", url);
 
 		this.objeniousService.getRouting().forEach(routing -> {
 			if (routing.getName().contains(tenant)) {
 				try {
 					this.objeniousService.deleteRouting(routing.getId());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Failed to delete routing {}", routing.getId(), e);
 				}
 			}
 		});

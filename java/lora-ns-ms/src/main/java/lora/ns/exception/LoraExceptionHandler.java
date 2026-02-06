@@ -1,8 +1,5 @@
 package lora.ns.exception;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,12 +11,14 @@ import com.cumulocity.sdk.client.SDKException;
 import feign.FeignException;
 import feign.FeignException.FeignClientException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lora.exception.LoraError;
 import lora.exception.LoraException;
 import lora.rest.LoraContextService;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class LoraExceptionHandler {
 
     private final LoraContextService loraContextService;
@@ -31,9 +30,8 @@ public class LoraExceptionHandler {
         }
         loraContextService.error(e.getMessage(), e);
         loraContextService.sendAlarm(e.getClass().getSimpleName(), e.getMessage(), CumulocitySeverities.CRITICAL);
-        StringWriter detailedMessage = new StringWriter();
-        e.printStackTrace(new PrintWriter(detailedMessage));
-        return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
+        log.error("LoraException occurred", e);
+        return new ResponseEntity<>(new LoraError(e.getMessage(), e.getClass().getSimpleName()),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -41,9 +39,8 @@ public class LoraExceptionHandler {
     ResponseEntity<LoraError> processFeignClientException(FeignClientException e) {
         loraContextService.error(e.getMessage(), e);
         loraContextService.sendAlarm(e.getClass().getSimpleName(), e.getMessage(), CumulocitySeverities.CRITICAL);
-        StringWriter detailedMessage = new StringWriter();
-        e.printStackTrace(new PrintWriter(detailedMessage));
-        return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
+        log.error("FeignClientException occurred", e);
+        return new ResponseEntity<>(new LoraError(e.getMessage(), e.getClass().getSimpleName()),
                 HttpStatus.resolve(e.status()));
     }
 
@@ -51,9 +48,8 @@ public class LoraExceptionHandler {
     ResponseEntity<LoraError> processFeignException(FeignException e) {
         loraContextService.error(e.getMessage(), e);
         loraContextService.sendAlarm(e.getClass().getSimpleName(), e.getMessage(), CumulocitySeverities.CRITICAL);
-        StringWriter detailedMessage = new StringWriter();
-        e.printStackTrace(new PrintWriter(detailedMessage));
-        return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
+        log.error("FeignException occurred", e);
+        return new ResponseEntity<>(new LoraError(e.getMessage(), e.getClass().getSimpleName()),
                 HttpStatus.resolve(e.status()));
     }
 
@@ -61,9 +57,8 @@ public class LoraExceptionHandler {
     ResponseEntity<LoraError> processC8YSDKException(SDKException e) {
         loraContextService.error(e.getMessage(), e);
         loraContextService.sendAlarm(e.getClass().getSimpleName(), e.getMessage(), CumulocitySeverities.CRITICAL);
-        StringWriter detailedMessage = new StringWriter();
-        e.printStackTrace(new PrintWriter(detailedMessage));
-        return new ResponseEntity<>(new LoraError(e.getMessage(), detailedMessage.toString()),
+        log.error("SDKException occurred", e);
+        return new ResponseEntity<>(new LoraError(e.getMessage(), e.getClass().getSimpleName()),
                 HttpStatus.resolve(e.getHttpStatus()));
     }
 }

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.PropertyDescription;
 import lora.ns.integration.LNSIntegrationService;
@@ -35,7 +36,7 @@ public class LiveObjectsIntegrationService extends LNSIntegrationService<LiveObj
 
 	@Override
 	public DeviceData processUplinkEvent(String event) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		JsonNode rootNode;
 		rootNode = mapper.readTree(event);
 		String devEUI = rootNode.at("/metadata/network/lora/devEUI").asText();
@@ -93,7 +94,7 @@ public class LiveObjectsIntegrationService extends LNSIntegrationService<LiveObj
 		loraContextService.log("Will process downlink event {}", event);
 		OperationData data = new OperationData();
 		data.setStatus(OperationStatus.SUCCESSFUL);
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		JsonNode rootNode = mapper.readTree(event);
 		String commandId = rootNode.at("/id").asText();
 		String type = rootNode.at("/type").asText();

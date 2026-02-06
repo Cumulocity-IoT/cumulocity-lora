@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
@@ -73,7 +74,7 @@ public class KerlinkIntegrationService extends LNSIntegrationService<KerlinkConn
 
 	@Override
 	public DeviceData processUplinkEvent(String event) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonUtils.getObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(event);
             String deviceEui = rootNode.get("endDevice").get("devEui").asText().toLowerCase();
@@ -111,7 +112,7 @@ public class KerlinkIntegrationService extends LNSIntegrationService<KerlinkConn
 	@Override
 	public OperationData processDownlinkEvent(String event) {
 		OperationData data = new OperationData();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(event);
 			data.setCommandId(rootNode.get("dataDownId").asText());
@@ -120,15 +121,15 @@ public class KerlinkIntegrationService extends LNSIntegrationService<KerlinkConn
 				data.setErrorMessage("Error");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error parsing downlink event", e);
 		}
 		return data;
 	}
-	
+
 	@Override
 	public boolean isOperationUpdate(String eventString) {
 		boolean result = false;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(eventString);
 			JsonNode op = rootNode.get("dataDownId");
@@ -136,7 +137,7 @@ public class KerlinkIntegrationService extends LNSIntegrationService<KerlinkConn
 				result = true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error parsing event string", e);
 		}
 		return result;
 	}

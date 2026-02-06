@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.operation.OperationData;
 
@@ -24,7 +25,7 @@ import lora.ns.operation.OperationData;
 @Slf4j
 public class TTNUplinkProcessor {
 	public DeviceData processUplinkEvent(String event) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		DeviceData data = null;
 		try {
 			JsonNode rootNode = mapper.readTree(event);
@@ -70,7 +71,6 @@ public class TTNUplinkProcessor {
 			data = new DeviceData(deviceEui, deviceEui, null, null, fPort, payload, updateTime, measurements,
 					lat != null ? BigDecimal.valueOf(lat) : null, lng != null ? BigDecimal.valueOf(lng) : null);
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("Error on Mapping LoRa payload to Cumulocity", e);
 		}
 		return data;
@@ -78,7 +78,7 @@ public class TTNUplinkProcessor {
 
 	public OperationData processDownlinkEvent(String event) {
 		OperationData data = new OperationData();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(event);
 			if (rootNode.has("downlink_sent")) {

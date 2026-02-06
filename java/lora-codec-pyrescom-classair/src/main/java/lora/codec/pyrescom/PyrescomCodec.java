@@ -12,6 +12,8 @@ import java.util.Map;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 import com.google.common.io.BaseEncoding;
 
 import org.joda.time.DateTime;
@@ -100,7 +102,7 @@ public class PyrescomCodec extends DeviceCodec {
 	@Override
 	protected DownlinkData encode(ManagedObjectRepresentation mor, Encode encode) {
 		String payload = null;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode root = mapper.readTree(encode.getOperation()).get("config");
 			boolean leds_enabled = root.get("leds_enabled").asBoolean();

@@ -12,6 +12,8 @@ import com.cumulocity.sdk.client.devicecontrol.DeviceControlApi;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lora.common.JsonUtils;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,14 +136,14 @@ public class SemtechCodec extends DeviceCodec {
 		try {
 			var response = loraCloudService.getDeviceInfo(RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), message)).execute();
 			if (response.isSuccessful()) {
-				var mapper = new ObjectMapper();
+				var mapper = JsonUtils.getObjectMapper();
 				result = mapper.readTree(response.body().string()).get("result");
 				logger.info("Answer of LoRa Cloud DAS is {} with content {}", response.code(), result.toString());
 			} else {
 				logger.error("Something went wrong while calling LoRa Cloud DAS: {}", response.errorBody().string());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error getting device info from LoRa Cloud DAS", e);
 		}
 
 		return result;
@@ -152,14 +154,14 @@ public class SemtechCodec extends DeviceCodec {
 		try {
 			var response = loraCloudService.sendData(RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), message)).execute();
 			if (response.isSuccessful()) {
-				var mapper = new ObjectMapper();
+				var mapper = JsonUtils.getObjectMapper();
 				result = mapper.readTree(response.body().string()).get("result");
 				logger.info("Answer of LoRa Cloud DAS is {} with content {}", response.code(), result.toString());
 			} else {
 				logger.error("Something went wrong while calling LoRa Cloud DAS: {}", response.errorBody().string());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error sending data to LoRa Cloud DAS", e);
 		}
 		return result;
 	}

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.PropertyDescription;
 import lora.ns.connector.PropertyDescription.PropertyType;
@@ -44,7 +45,7 @@ public class ActilityIntegrationService extends LNSIntegrationService<ActilityCo
 
 	@Override
 	public DeviceData processUplinkEvent(String event) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		DeviceData data = null;
 		try {
 			JsonNode rootNode = mapper.readTree(event);
@@ -97,7 +98,7 @@ public class ActilityIntegrationService extends LNSIntegrationService<ActilityCo
 	public OperationData processDownlinkEvent(String event) {
 		OperationData data = new OperationData();
 		data.setStatus(OperationStatus.SUCCESSFUL);
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(event);
 			String commandId = rootNode.at("/DevEUI_downlink_Sent/CorrelationID").asText();
@@ -117,7 +118,7 @@ public class ActilityIntegrationService extends LNSIntegrationService<ActilityCo
 
 	@Override
 	public boolean isOperationUpdate(String eventString) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		boolean result = false;
 		try {
 			JsonNode rootNode = mapper.readTree(eventString);

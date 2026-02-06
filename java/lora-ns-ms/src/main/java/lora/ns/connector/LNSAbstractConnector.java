@@ -95,7 +95,6 @@ public abstract class LNSAbstractConnector implements LNSConnector, Initializing
 		try {
 			init();
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("Couldn't start connector.", e);
 		}
 	}

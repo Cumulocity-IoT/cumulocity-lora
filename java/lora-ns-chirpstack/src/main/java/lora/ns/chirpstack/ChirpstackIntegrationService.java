@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
@@ -63,7 +64,7 @@ public class ChirpstackIntegrationService extends LNSIntegrationService<Chirpsta
 
 	@Override
 	public DeviceData processUplinkEvent(String event) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		DeviceData data = null;
 		JsonNode rootNode;
 		try {
@@ -109,7 +110,7 @@ public class ChirpstackIntegrationService extends LNSIntegrationService<Chirpsta
 
 	@Override
 	public OperationData processDownlinkEvent(String event) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		OperationData data = null;
 		JsonNode rootNode;
 		try {
@@ -127,7 +128,7 @@ public class ChirpstackIntegrationService extends LNSIntegrationService<Chirpsta
 				data.setStatus(OperationStatus.EXECUTING);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error processing downlink event", e);
 		}
 		return data;
 	}

@@ -46,6 +46,9 @@ public class LNSRestController {
 
 	@PostMapping(value = "/{lnsInstanceId}/uplink", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> lnsUp(@RequestBody String event, @PathVariable String lnsInstanceId) {
+		if (event == null || event.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		}
 		loraContext.setConnector(lnsConnectorManager.getConnector(lnsInstanceId));
 		lnsIntegrationService.mapEventToC8Y(event, lnsInstanceId);
 		return ResponseEntity.ok().build();
@@ -53,6 +56,9 @@ public class LNSRestController {
 
 	@PostMapping(value = "/{lnsInstanceId}/downlink", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> lnsDown(@RequestBody String event, @PathVariable String lnsInstanceId) {
+		if (event == null || event.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		}
 		loraContext.setConnector(lnsConnectorManager.getConnector(lnsInstanceId));
 		lnsIntegrationService.updateOperation(event, lnsInstanceId);
 		return ResponseEntity.ok().build();

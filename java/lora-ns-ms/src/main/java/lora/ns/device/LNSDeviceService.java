@@ -16,6 +16,7 @@ import com.cumulocity.rest.representation.operation.OperationRepresentation;
 import com.cumulocity.sdk.client.devicecontrol.DeviceControlApi;
 import com.cumulocity.sdk.client.devicecontrol.OperationCollection;
 import com.cumulocity.sdk.client.devicecontrol.OperationFilter;
+import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.identity.ExternalIDCollection;
 import com.cumulocity.sdk.client.identity.IdentityApi;
@@ -143,7 +144,7 @@ public class LNSDeviceService {
 		}
 	}
 
-	private static Object lock = new Object();
+	private static final Object lock = new Object();
 
 	private ManagedObjectRepresentation getOrCreateDevice(String lnsInstanceId, String devEui) {
 		var mor = getDevice(devEui.toLowerCase());
@@ -186,7 +187,7 @@ public class LNSDeviceService {
 		ManagedObject connectorApi = inventoryApi.getManagedObjectApi(GId.asGId(lnsConnectorId));
 		try {
 			connectorApi.getChildDevice(mor.getId());
-		} catch (Exception e) {
+		} catch (SDKException e) {
 			connectorApi.addChildDevice(mor.getId());
 		}
 	}
@@ -206,7 +207,7 @@ public class LNSDeviceService {
 		try {
 			c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, C8YUtils.DEVEUI_TYPE);
 			c8yUtils.createExternalIdOrDeleteMor(mor, devEUI, "c8y_Serial");
-		} catch(Exception e) {
+		} catch (SDKException e) {
 			loraContext.setDevice(null);
 			throw e;
 		}

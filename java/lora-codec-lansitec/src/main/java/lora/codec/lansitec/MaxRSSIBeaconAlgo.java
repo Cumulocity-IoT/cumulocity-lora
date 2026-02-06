@@ -1,9 +1,9 @@
 package lora.codec.lansitec;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -14,8 +14,6 @@ import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.measurement.MeasurementCollection;
 import com.cumulocity.sdk.client.measurement.MeasurementFilter;
 import com.cumulocity.sdk.client.measurement.PagedMeasurementCollectionRepresentation;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ public class MaxRSSIBeaconAlgo extends Algo {
     @Override
     public Beacon getPosition(ManagedObjectRepresentation tracker, List<Beacon> beacons) {
         Beacon beacon = null;
-        ObjectMapper mapper = new ObjectMapper();
         NavigableMap<DateTime, List<Beacon>> beaconMatrix = new TreeMap<>();
         beaconMatrix.put(DateTime.now(), beacons);
         for (Beacon newBeacon : beacons) {
@@ -52,18 +49,18 @@ public class MaxRSSIBeaconAlgo extends Algo {
             }
             for (MeasurementRepresentation m : pagedMeasurementCollectionRepresentation) {
                 try {
-                    JsonNode rootNode = mapper.readTree(m.toJSON());
-                    int rssi = rootNode.get(m.getType()).get("rssi").get("value").decimalValue().intValue();
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> fragment = (Map<String, Object>) m.getProperty(m.getType());
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> rssiEntry = (Map<String, Object>) fragment.get("rssi");
+                    int rssi = ((Number) rssiEntry.get("value")).intValue();
                     logger.info("Reading RSSI {} for beacon {} - {}", rssi, newBeacon.getMajor(), newBeacon.getMinor());
-                    /*if (rssi > newBeacon.getRssi()) {
-                        newBeacon.setRssi(rssi);
-                    }*/
                     if (!beaconMatrix.containsKey(m.getDateTime())) {
                         beaconMatrix.put(m.getDateTime(), new ArrayList<>());
                     }
                     beaconMatrix.get(m.getDateTime()).add(new Beacon(newBeacon.getMajor(), newBeacon.getMinor(), rssi));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("Error reading measurement RSSI value", e);
                 }
             }
             logger.info("Highest RSSI for beacon {} - {} is {}", newBeacon.getMajor(), newBeacon.getMinor(), newBeacon.getRssi());

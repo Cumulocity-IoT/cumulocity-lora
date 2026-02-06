@@ -12,7 +12,8 @@ public class ConnectorWizardStep1 implements LNSConnectorWizardStep {
 			PropertyDescription.password("password", "Password"),
 			PropertyDescription.text("domain", "Domain", false),
 			PropertyDescription.text("group", "Group", false),
-			PropertyDescription.text("webhook-url", "Webhook URL", false));
+			PropertyDescription.text("webhook-url", "Webhook URL", false),
+			PropertyDescription.bool("disableSslValidation", "Disable SSL Validation (dev/test only)"));
 
 	@Override
 	public String getName() {

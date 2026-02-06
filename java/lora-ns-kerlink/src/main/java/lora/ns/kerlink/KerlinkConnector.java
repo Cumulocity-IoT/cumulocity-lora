@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import c8y.ConnectionState;
 import lora.codec.downlink.DownlinkData;
 import lora.codec.uplink.C8YData;
+import lora.common.JsonUtils;
 import lora.ns.connector.LNSAbstractConnector;
 import lora.ns.device.DeviceProvisioning;
 import lora.ns.device.EndDevice;
@@ -70,7 +71,7 @@ public class KerlinkConnector extends LNSAbstractConnector {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		jwt = restTemplate.postForObject(baseUrl + "/login", new HttpEntity<String>(request, headers), JwtDto.class);
-		logger.info("Received token: {} {}", jwt.getTokenType(), jwt.getToken());
+		logger.info("Received token of type: {}", jwt.getTokenType());
 		headers = new HttpHeaders();
 		headers.set("Authorization", jwt.getTokenType() + " " + jwt.getToken());
 		// UriComponentsBuilder builder =
@@ -254,14 +255,14 @@ public class KerlinkConnector extends LNSAbstractConnector {
 			List<MediaType> mediaTypes = new ArrayList<>();
 			mediaTypes.add(MediaType.APPLICATION_JSON);
 			headers.setAccept(mediaTypes);
-			ObjectMapper mapper = new ObjectMapper();
+			ObjectMapper mapper = JsonUtils.getObjectMapper();
 			MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 			try {
 				String dto = mapper.writeValueAsString(currentPushConfigurationDto);
 				logger.info("dto = {}", dto);
 				map.add("dto", dto);
 			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+				logger.error("Failed to serialize push configuration", e);
 			}
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 			ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/pushConfigurations", HttpMethod.POST,

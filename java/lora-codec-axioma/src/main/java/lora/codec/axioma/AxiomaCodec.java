@@ -206,10 +206,16 @@ public class AxiomaCodec extends DeviceCodec {
 	
 	public VIF match(byte[] bytes, int position) {
 		VIF vif = null;
+		if (position < 0 || position >= bytes.length) {
+			return null;
+		}
 		int c = 0;
 		Object currentMap = VIF.TREEMAP.get(bytes[position]);
 		while(currentMap != null && !(currentMap instanceof VIF)) {
 			c++;
+			if (position + c >= bytes.length) {
+				return null;
+			}
 			currentMap = ((Map<?, ?>)currentMap).get(bytes[position + c]);
 		}
 		if (currentMap instanceof VIF) {
@@ -252,7 +258,7 @@ public class AxiomaCodec extends DeviceCodec {
 		default:
 			break;
 		}
-		return null;
+		return c8yData;
 	}
 
 	@Override

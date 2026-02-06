@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 
+import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
@@ -35,7 +36,7 @@ public class LoriotIntegrationService extends LNSIntegrationService<LoriotConnec
 
 	@Override
 	public DeviceData processUplinkEvent(String event) {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		DeviceData data = null;
 		try {
 			JsonNode rootNode = mapper.readTree(event);
@@ -73,7 +74,6 @@ public class LoriotIntegrationService extends LNSIntegrationService<LoriotConnec
 						null, null);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("Error on Mapping LoRa payload to Cumulocity", e);
 		}
 		return data;
@@ -83,7 +83,7 @@ public class LoriotIntegrationService extends LNSIntegrationService<LoriotConnec
 	public OperationData processDownlinkEvent(String event) {
 		OperationData data = new OperationData();
 		data.setStatus(OperationStatus.SUCCESSFUL);
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(event);
 			String commandId = rootNode.get("seqdn") != null ? rootNode.get("seqdn").asText() : null;
@@ -104,14 +104,14 @@ public class LoriotIntegrationService extends LNSIntegrationService<LoriotConnec
 	@Override
 	public boolean isOperationUpdate(String eventString) {
 		boolean result = false;
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonUtils.getObjectMapper();
 		JsonNode rootNode;
 		try {
 			rootNode = mapper.readTree(eventString);
 			String msgType = rootNode.get("cmd").asText();
 			result = msgType.equals("txd");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error parsing event string", e);
 		}
 		return result;
 	}

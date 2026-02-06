@@ -86,6 +86,7 @@ public class ActilityConnector extends LNSAbstractConnector {
 	private static final String AS_KEY_PROPERTY = "asKey";
 	private static final String AS_ID_PREFIX = "cumulocity-";
 	private static final String DEFAULT_AS_ID = "cumulocity";
+	// Public default Actility AS key, used as fallback when no key is configured
 	private static final String DEFAULT_AS_KEY = "4e0ff46472fa1840f25368c066e94769";
 
 	private ActilityServiceAccountService actilityServiceAccountService;
@@ -131,30 +132,27 @@ public class ActilityConnector extends LNSAbstractConnector {
 		super(instance);
 	}
 
-	// SSLSocketFactory
-	// Install the all-trusting trust manager
-	private static SSLSocketFactory getSSLSocketFactory() {
-		try {
-			SSLContext sslContext = SSLContext.getInstance("SSL");
-			sslContext.init(null, getTrustManager(), new SecureRandom());
-			return sslContext.getSocketFactory();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	private SSLSocketFactory getSSLSocketFactory() {
+		if (isSslValidationDisabled()) {
+			try {
+				SSLContext sslContext = SSLContext.getInstance("SSL");
+				sslContext.init(null, getPermissiveTrustManager(), new SecureRandom());
+				return sslContext.getSocketFactory();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
+		return (SSLSocketFactory) SSLSocketFactory.getDefault();
 	}
 
-	// TrustManager
-	// trust manager that does not validate certificate chains
-	private static TrustManager[] getTrustManager() {
+	private static TrustManager[] getPermissiveTrustManager() {
 		return new TrustManager[] { new X509TrustManager() {
 			@Override
 			public void checkClientTrusted(X509Certificate[] chain, String authType) {
-				// Do nothing, we trust everything
 			}
 
 			@Override
 			public void checkServerTrusted(X509Certificate[] chain, String authType) {
-				// Do nothing, we trust everything
 			}
 
 			@Override
@@ -164,9 +162,15 @@ public class ActilityConnector extends LNSAbstractConnector {
 		} };
 	}
 
-	// HostnameVerifier
-	private static HostnameVerifier getHostnameVerifier() {
-		return (String s, SSLSession sslSession) -> true;
+	private HostnameVerifier getHostnameVerifier() {
+		if (isSslValidationDisabled()) {
+			return (String s, SSLSession sslSession) -> true;
+		}
+		return javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier();
+	}
+
+	private boolean isSslValidationDisabled() {
+		return Boolean.parseBoolean(properties.getProperty("disableSslValidation", "false"));
 	}
 
 	@Override
@@ -174,17 +178,20 @@ public class ActilityConnector extends LNSAbstractConnector {
 		final ch.qos.logback.classic.Logger serviceLogger = (ch.qos.logback.classic.Logger) LoggerFactory
 						.getLogger("lora.ns.actility");
 		serviceLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
+		if (isSslValidationDisabled()) {
+			log.warn("SSL validation is DISABLED for Actility connector. This should only be used for dev/test with self-signed certificates.");
+		}
 		String url = properties.getProperty("url");
 		var feignBuilder = Feign.builder().client(new Client.Default(getSSLSocketFactory(), getHostnameVerifier()))
 						.decoder(new JacksonDecoder(objectMapper)).encoder(new FormEncoder())
-						.logger(new Slf4jLogger("lora.ns.actility")).logLevel(Level.FULL)
+						.logger(new Slf4jLogger("lora.ns.actility")).logLevel(Level.BASIC)
 						.requestInterceptor(template -> template.header("Content-Type",
 										"application/x-www-form-urlencoded"));
 		actilityServiceAccountService = feignBuilder.target(ActilityServiceAccountService.class,
 						url + "/users-auth/protocol/");
 		feignBuilder = Feign.builder().client(new Client.Default(getSSLSocketFactory(), getHostnameVerifier()))
 						.decoder(new JacksonDecoder(objectMapper)).encoder(new JacksonEncoder(objectMapper))
-						.logger(new Slf4jLogger("lora.ns.actility")).logLevel(Level.FULL)
+						.logger(new Slf4jLogger("lora.ns.actility")).logLevel(Level.BASIC)
 						.requestInterceptor(template -> template.headers(Map.of("Content-Type",
 										List.of("application/json"), "Accept", List.of("application/json"))));
 
@@ -239,8 +246,7 @@ public class ActilityConnector extends LNSAbstractConnector {
 		String domain = properties.getProperty("domain");
 		String group = properties.getProperty("group");
 		var routeId = getProperty("routeId");
-		log.info("Configuring routings to: {} with credentials: {}:{} and domain {}:{}", url, login, password, domain,
-						group);
+		log.info("Configuring routings to: {} with domain {}:{}", url, domain, group);
 		if (routeId.isPresent()) {
 			// Update appserver
 			this.appServerId = routeId.get().toString();

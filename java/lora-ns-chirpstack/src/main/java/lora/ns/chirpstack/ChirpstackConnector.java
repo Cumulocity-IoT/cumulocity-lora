@@ -74,7 +74,6 @@ public class ChirpstackConnector extends LNSAbstractConnector {
 												Integer.parseInt(properties.getProperty("port")))
 								.sslContext(GrpcSslContexts.forClient().ciphers(null).build()).build();
 			} catch (SSLException e) {
-				e.printStackTrace();
 				log.error("Can't initiate TLS connection.", e);
 			}
 		} else {
@@ -127,7 +126,7 @@ public class ChirpstackConnector extends LNSAbstractConnector {
 			stub.deleteHttpIntegration(DeleteHttpIntegrationRequest.newBuilder()
 							.setApplicationId("urn:uuid:" + properties.getProperty("application")).build());
 		} catch (StatusRuntimeException e) {
-			e.printStackTrace();
+			log.info("No existing HTTP integration to delete", e);
 		}
 		stub.createHttpIntegration(CreateHttpIntegrationRequest.newBuilder()
 						.setIntegration(HttpIntegration.newBuilder()

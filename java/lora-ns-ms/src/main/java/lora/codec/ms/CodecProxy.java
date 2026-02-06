@@ -39,6 +39,8 @@ public class CodecProxy implements Component {
 
 	private String authentication;
 
+	private final RestTemplate restTemplate = new RestTemplate();
+
 	public CodecProxy(String id, String name, String version) {
 		super();
 		this.id = id;
@@ -61,15 +63,22 @@ public class CodecProxy implements Component {
 		return version;
 	}
 
+	private String getBaseUrl() {
+		String baseUrl = System.getenv(C8Y_BASEURL);
+		if (baseUrl == null) {
+			throw new IllegalStateException("Environment variable " + C8Y_BASEURL + " is not set");
+		}
+		return baseUrl;
+	}
+
 	public DownlinkData encode(Encode data) throws CannotEncodePayloadException {
-		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set(HttpHeaders.AUTHORIZATION, authentication);
 			headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 			headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 			ResponseEntity<DownlinkData> response = restTemplate.exchange(
-					System.getenv(C8Y_BASEURL) + SERVICE_LORA_CODEC + id + "/encode", HttpMethod.POST,
+					getBaseUrl() + SERVICE_LORA_CODEC + id + "/encode", HttpMethod.POST,
 					new HttpEntity<Encode>(data, headers), DownlinkData.class);
 			log.info("Answer of encoder is {} with content {}", response.getStatusCode(), response.getBody());
 			return response.getBody();
@@ -90,13 +99,12 @@ public class CodecProxy implements Component {
 	}
 
 	public void decode(Decode data) throws CannotDecodePayloadException {
-		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set(HttpHeaders.AUTHORIZATION, authentication);
 			headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 			ResponseEntity<Void> response = restTemplate.exchange(
-					System.getenv(C8Y_BASEURL) + SERVICE_LORA_CODEC + id + "/decode", HttpMethod.POST,
+					getBaseUrl() + SERVICE_LORA_CODEC + id + "/decode", HttpMethod.POST,
 					new HttpEntity<Decode>(data, headers), Void.class);
 			log.info("Answer of decoder is {}", response.getStatusCode());
 		} catch (RestClientResponseException e) {
@@ -113,12 +121,11 @@ public class CodecProxy implements Component {
 
 	public Map<String, DeviceOperationElement> getAvailableOperations(String model) {
 		Map<String, DeviceOperationElement> result = new HashMap<>();
-		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set(HttpHeaders.AUTHORIZATION, authentication);
 			headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-			String url = System.getenv(C8Y_BASEURL) + SERVICE_LORA_CODEC + id + "/operations/" + model;
+			String url = getBaseUrl() + SERVICE_LORA_CODEC + id + "/operations/" + model;
 			log.info("Will get list of operations from URL {}", url);
 			ResponseEntity<Map<String, DeviceOperationElement>> response = restTemplate.exchange(url, HttpMethod.GET,
 					new HttpEntity<String>("", headers),
@@ -126,13 +133,11 @@ public class CodecProxy implements Component {
 					});
 			result = response.getBody();
 		} catch (RestClientResponseException e) {
-			e.printStackTrace();
-			log.error(e.getResponseBodyAsString());
+			log.error("Error getting available operations: {}", e.getResponseBodyAsString(), e);
 		} catch (UnknownContentTypeException e) {
-			e.printStackTrace();
-			log.error(e.getResponseBodyAsString());
+			log.error("Unknown content type getting available operations: {}", e.getResponseBodyAsString(), e);
 		} catch (ResourceAccessException e) {
-			e.printStackTrace();
+			log.error("Cannot access codec service for available operations", e);
 		}
 		return result;
 	}

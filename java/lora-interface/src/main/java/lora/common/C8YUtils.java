@@ -1,6 +1,5 @@
 package lora.common;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -22,7 +21,7 @@ import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.identity.IdentityApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lora.common.JsonUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +41,8 @@ public class C8YUtils {
 
 	@Value("${C8Y.baseURL}")
 	private String c8yBaseUrl;
+
+	private RestTemplate restTemplate = new RestTemplate();
 
 	public static final String DEVEUI_TYPE = "LoRa devEUI";
 	public static final String CHILD_DEVICE_TYPE = "LoRa child device ID";
@@ -75,7 +76,7 @@ public class C8YUtils {
 		ExternalIDRepresentation id = null;
 		try {
 			id = createExternalId(mor, externalId, type);
-		} catch (Exception e) {
+		} catch (SDKException e) {
 			log.error("Couldn't create external Id, deleting MOR", e);
 			inventoryApi.delete(mor.getId());
 			throw e;
@@ -118,7 +119,6 @@ public class C8YUtils {
 
 	public String getTenantDomain() {
 		String result = null;
-		RestTemplate restTemplate = new RestTemplate();
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Authorization", subscriptionsService.getCredentials(subscriptionsService.getTenant()).get()
@@ -126,9 +126,8 @@ public class C8YUtils {
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 			result = restTemplate.exchange(c8yBaseUrl + "/tenant/currentTenant", HttpMethod.GET,
 					new HttpEntity<String>("", headers), String.class).getBody();
-			ObjectMapper mapper = new ObjectMapper();
-			result = mapper.readTree(result).get("domainName").asText();
-		} catch (IOException | HttpClientErrorException e) {
+			result = JsonUtils.readTree(result).get("domainName").asText();
+		} catch (IllegalArgumentException | HttpClientErrorException e) {
 			log.error("Couldn't get tenant domain", e);
 		}
 		return result;

@@ -238,7 +238,7 @@ public class ZCLDecoder {
 						changeDeviceState(device, c8yData, "Switch", STATUS_CHANGED_TO + state, "switchStatus", state, time);
 					}
 					// multibinary input present value
-					if ((clusterdID == 0x8005) && (attributID == 0x0000)) {
+					if ((clusterdID == 0x8005) && (attributID == 0x0000) && index + 1 < bytes.length) {
 						changeDeviceState(device, c8yData, "PIN 1", STATUS_CHANGED_TO + ((bytes[index + 1] & 0x01) == 0x01), "pinState1", ((bytes[index + 1] & 0x01) == 0x01), time);
 						changeDeviceState(device, c8yData, "PIN 2", STATUS_CHANGED_TO + ((bytes[index + 1] & 0x02) == 0x02), "pinState2", ((bytes[index + 1] & 0x02) == 0x02), time);
 						changeDeviceState(device, c8yData, "PIN 3", STATUS_CHANGED_TO + ((bytes[index + 1] & 0x04) == 0x04), "pinState3", ((bytes[index + 1] & 0x04) == 0x04), time);
@@ -251,7 +251,7 @@ public class ZCLDecoder {
 						changeDeviceState(device, c8yData, "PIN 10", STATUS_CHANGED_TO + ((bytes[index] & 0x02) == 0x02), "pinState10", ((bytes[index] & 0x02) == 0x02), time);
 					}
 					// analog input
-					if ((clusterdID == 0x000c) && (attributID == 0x0055)) {
+					if ((clusterdID == 0x000c) && (attributID == 0x0055) && index + 4 <= bytes.length) {
 						buffer = ByteBuffer.wrap(bytes, index, 4);
 						c8yData.addMeasurement(device, "analog", "a", "", BigDecimal.valueOf(buffer.getFloat()), time);
 					}
@@ -401,7 +401,7 @@ public class ZCLDecoder {
 							logger.error("Model {} is not supported yet", model);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("Error decoding ZCL data", e);
 					}
 				} else {
 					logger.error("Device model needs to be provided!");

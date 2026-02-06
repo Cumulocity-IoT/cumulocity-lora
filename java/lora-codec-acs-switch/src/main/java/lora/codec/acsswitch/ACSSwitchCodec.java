@@ -1,6 +1,5 @@
 package lora.codec.acsswitch;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -15,6 +14,8 @@ import com.cumulocity.model.event.CumulocitySeverities;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lora.common.JsonUtils;
 import com.google.common.io.BaseEncoding;
 
 import org.joda.time.DateTime;
@@ -502,7 +503,7 @@ public class ACSSwitchCodec extends DeviceCodec {
 				}
 				c8yData.addEvent(mor, "Parameter reading", "Parameter reading", map, DateTime.now());
 				try {
-					mor.set(new Configuration(new ObjectMapper().writeValueAsString(map)));
+					mor.set(new Configuration(JsonUtils.toJson(map)));
 				} catch (Exception e) {
 					logger.error("Error while seriliazing device configuration", e);
 				}
@@ -577,10 +578,9 @@ public class ACSSwitchCodec extends DeviceCodec {
 			data.setPayload(String.format("03%1$02X", cpt) + payload);
 			return data;
 		}
-		ObjectMapper mapper = new ObjectMapper();
 		JsonNode root;
 		try {
-			root = mapper.readTree(encode.getOperation());
+			root = JsonUtils.readTree(encode.getOperation());
 			String command = root.fieldNames().next();
 			PARAMETER param = PARAMETER.valueOf(command);
 			JsonNode params = root.get(command);
@@ -592,7 +592,7 @@ public class ACSSwitchCodec extends DeviceCodec {
 				}
 				data.setPayload("0301" + param.buildPayload());
 			}
-		} catch (IOException e) {
+		} catch (IllegalArgumentException e) {
 			logger.error("Coudln't read operation content: {}", encode.getOperation(), e);
 		}
 		data.setFport(1);

@@ -66,8 +66,8 @@ public class BitBuffer {
     private int bitsBuf2HuffPattern(int nb_bits) throws Exception {
         int sourceBitStart = index;
         int sz = nb_bits - 1;
-        if (byteArray.length * 8 < sourceBitStart + nb_bits) {
-            throw new Exception("Verify that dest buf is large enough");
+        if (nb_bits <= 0 || byteArray.length * 8 < sourceBitStart + nb_bits) {
+            throw new Exception("Buffer overflow: need " + nb_bits + " bits at position " + sourceBitStart + " but buffer has " + (byteArray.length * 8) + " bits");
         }
         int bittoread = 0;
         int pattern = 0;
@@ -89,6 +89,9 @@ public class BitBuffer {
     public int getNextSample(int sampleType, int nbBitsInput) throws Exception {
         int nbBits = nbBitsInput;
         int sourceBitStart = this.index;
+        if (nbBits <= 0 || byteArray.length * 8 < sourceBitStart + nbBits) {
+            throw new Exception("Buffer overflow: need " + nbBits + " bits at position " + sourceBitStart + " but buffer has " + (byteArray.length * 8) + " bits");
+        }
         this.index += nbBits;
         if (sampleType == ST_FL && nbBits != 32) {
             throw new Exception("Mauvais sampletype");
