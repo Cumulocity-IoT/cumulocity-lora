@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ BsLogicalChannelsUpDownInner.JSON_PROPERTY_FROM, BsLogicalChannelsUpDownInner.JSON_PROPERTY_TO })
 @JsonTypeName("Bs_logicalChannels_upDown_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsLogicalChannelsUpDownInner {
   public static final String JSON_PROPERTY_FROM = "from";
   private String from;

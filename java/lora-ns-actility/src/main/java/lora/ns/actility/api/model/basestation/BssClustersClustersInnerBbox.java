@@ -28,7 +28,7 @@ import lora.ns.actility.api.model.common.Coordinates;
 @JsonPropertyOrder({ BssClustersClustersInnerBbox.JSON_PROPERTY_NORTHEAST,
     BssClustersClustersInnerBbox.JSON_PROPERTY_SOUTHWEST })
 @JsonTypeName("BssClusters_clusters_inner_bbox")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BssClustersClustersInnerBbox {
   public static final String JSON_PROPERTY_NORTHEAST = "northeast";
   private Coordinates northeast;

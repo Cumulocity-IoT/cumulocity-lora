@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ DeviceLorawanLRR.JSON_PROPERTY_I_D, DeviceLorawanLRR.JSON_PROPERTY_R_S_S_I,
     DeviceLorawanLRR.JSON_PROPERTY_S_N_R, DeviceLorawanLRR.JSON_PROPERTY_INSTANT_P_E_R,
     DeviceLorawanLRR.JSON_PROPERTY_E_S_P, DeviceLorawanLRR.JSON_PROPERTY_LAT, DeviceLorawanLRR.JSON_PROPERTY_LON })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceLorawanLRR {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

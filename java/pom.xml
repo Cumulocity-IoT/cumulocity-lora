@@ -9,11 +9,11 @@
   <packaging>pom</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <c8y.version>1015.0.278</c8y.version>
+    <c8y.version>2025.87.0</c8y.version>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.release>21</maven.compiler.release>
-    <spring-boot-dependencies.version>2.7.18</spring-boot-dependencies.version>
+    <spring-boot.version>3.5.5</spring-boot.version>
     <feign.version>13.2.1</feign.version>
   </properties>
   <repositories>
@@ -73,22 +73,6 @@
         <version>3.8.0</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.12.6.1</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.datatype</groupId>
-        <artifactId>jackson-datatype-joda</artifactId>
-        <version>2.12.6</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.7.2</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
         <groupId>com.nsn.cumulocity.clients-java</groupId>
         <artifactId>microservice-dependencies</artifactId>
         <version>${c8y.version}</version>
@@ -114,7 +98,7 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot-dependencies.version}</version>
+          <version>${spring-boot.version}</version>
           <executions>
             <execution>
               <goals>

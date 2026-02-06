@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * BsTags
  */
 @JsonPropertyOrder({ BsTags.JSON_PROPERTY_BRIEFS, BsTags.JSON_PROPERTY_MORE })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsTags {
   public static final String JSON_PROPERTY_BRIEFS = "briefs";
   private List<BsTagsBriefsInner> briefs = new ArrayList<>();

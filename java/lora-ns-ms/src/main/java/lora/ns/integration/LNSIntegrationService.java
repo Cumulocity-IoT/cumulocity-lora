@@ -6,9 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.microservice.subscription.model.MicroserviceSubscriptionAddedEvent;
@@ -472,17 +470,12 @@ public abstract class LNSIntegrationService<I extends LNSConnector> {
 		taskScheduler.setPoolSize(20);
 		taskScheduler.schedule(this::scanGateways, new Trigger() {
 			@Override
-			public Date nextExecutionTime(TriggerContext triggerContext) {
-				Calendar nextExecutionTime = new GregorianCalendar();
-				Date lastActualExecutionTime = triggerContext.lastActualExecutionTime();
-				if (lastActualExecutionTime != null) {
-					nextExecutionTime.setTime(lastActualExecutionTime);
-					nextExecutionTime.add(Calendar.MILLISECOND, gatewayScanRate);
-				} else {
-					nextExecutionTime.setTime(new Date());
-					nextExecutionTime.add(Calendar.MILLISECOND, gatewayScanStartDelay);
+			public Instant nextExecution(TriggerContext triggerContext) {
+				Instant lastExecution = triggerContext.lastActualExecution();
+				if (lastExecution != null) {
+					return lastExecution.plusMillis(gatewayScanRate);
 				}
-				return nextExecutionTime.getTime();
+				return Instant.now().plusMillis(gatewayScanStartDelay);
 			}
 		});
 		return taskScheduler;

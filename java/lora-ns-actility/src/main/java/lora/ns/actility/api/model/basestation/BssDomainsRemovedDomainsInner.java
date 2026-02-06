@@ -27,7 +27,7 @@ import lora.ns.actility.api.model.common.DomainGroup;
 @JsonPropertyOrder({ BssDomainsRemovedDomainsInner.JSON_PROPERTY_NAME,
     BssDomainsRemovedDomainsInner.JSON_PROPERTY_GROUP })
 @JsonTypeName("BssDomains_removedDomains_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BssDomainsRemovedDomainsInner {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;

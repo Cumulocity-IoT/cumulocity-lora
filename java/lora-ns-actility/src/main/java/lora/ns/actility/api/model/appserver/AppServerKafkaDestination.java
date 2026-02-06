@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({ AppServerKafkaDestination.JSON_PROPERTY_BROKER_I_D,
     AppServerKafkaDestination.JSON_PROPERTY_TOPIC_NAME })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServerKafkaDestination {
   public static final String JSON_PROPERTY_BROKER_I_D = "brokerID";
   private String brokerID;

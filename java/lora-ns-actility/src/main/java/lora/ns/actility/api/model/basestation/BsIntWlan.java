@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * BsIntWlan
  */
 @JsonPropertyOrder({ BsIntWlan.JSON_PROPERTY_RSSI, BsIntWlan.JSON_PROPERTY_SSID, BsIntWlan.JSON_PROPERTY_STATE })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsIntWlan {
   public static final String JSON_PROPERTY_RSSI = "rssi";
   private Float rssi;

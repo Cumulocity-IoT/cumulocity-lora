@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
     BsTagsBriefsInner.JSON_PROPERTY_MULTICAST_VISIBILITY, BsTagsBriefsInner.JSON_PROPERTY_NAME,
     BsTagsBriefsInner.JSON_PROPERTY_HREF })
 @JsonTypeName("BsTags_briefs_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsTagsBriefsInner {
   public static final String JSON_PROPERTY_MANAGED_NETWORK_VISIBILITY = "managedNetworkVisibility";
   private Boolean managedNetworkVisibility;

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsLog.JSON_PROPERTY_RAM_DIR_USED, BsLog.JSON_PROPERTY_TRACE_LEVEL,
     BsLog.JSON_PROPERTY_TRACE_SINCE })
 @JsonTypeName("Bs_log")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsLog {
   public static final String JSON_PROPERTY_RAM_DIR_USED = "ramDirUsed";
   private Boolean ramDirUsed;

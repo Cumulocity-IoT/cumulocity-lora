@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     BsIntCellular.JSON_PROPERTY_NETWORK_OPERATOR, BsIntCellular.JSON_PROPERTY_RSSI, BsIntCellular.JSON_PROPERTY_RSCP,
     BsIntCellular.JSON_PROPERTY_EC_IO, BsIntCellular.JSON_PROPERTY_RSRP, BsIntCellular.JSON_PROPERTY_RSRQ,
     BsIntCellular.JSON_PROPERTY_SINR })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsIntCellular {
   public static final String JSON_PROPERTY_STATE = "state";
   private Integer state;

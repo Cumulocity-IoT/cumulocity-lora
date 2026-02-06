@@ -47,7 +47,7 @@ import lora.ns.actility.api.model.common.IsmBandID;
     BsBrief.JSON_PROPERTY_RF_HARDWARE_CONFIG, BsBrief.JSON_PROPERTY_STATE, BsBrief.JSON_PROPERTY_STATE_SINCE,
     BsBrief.JSON_PROPERTY_TAGS, BsBrief.JSON_PROPERTY_TIME_SYNC, BsBrief.JSON_PROPERTY_UP_FRAME,
     BsBrief.JSON_PROPERTY_VENDOR, BsBrief.JSON_PROPERTY_VERSION, BsBrief.JSON_PROPERTY_RF_REGION_I_D })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BsBrief {
   public static final String JSON_PROPERTY_ACTIVATE_BEACON_TRANSMISSION = "activateBeaconTransmission";

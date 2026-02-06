@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsBriefVendor.JSON_PROPERTY_LOGO, BsBriefVendor.JSON_PROPERTY_NAME,
     BsBriefVendor.JSON_PROPERTY_COMMERCIAL_NAME, BsBriefVendor.JSON_PROPERTY_COMMERCIAL_DESCRIPTION })
 @JsonTypeName("BsBrief_vendor")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsBriefVendor {
   public static final String JSON_PROPERTY_LOGO = "logo";
   private String logo;

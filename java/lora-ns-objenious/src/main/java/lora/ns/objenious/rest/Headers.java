@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
  * Key/value pairs can be present. Keys and values will be strings. 
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
 
 public class Headers extends HashMap<String, String>  {
 

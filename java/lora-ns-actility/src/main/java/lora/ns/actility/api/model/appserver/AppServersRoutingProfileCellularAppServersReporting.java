@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ AppServersRoutingProfileCellularAppServersReporting.JSON_PROPERTY_MICROFLOW_EVENTS })
 @JsonTypeName("AppServersRoutingProfileCellular_appServersReporting")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServersRoutingProfileCellularAppServersReporting {
   public static final String JSON_PROPERTY_MICROFLOW_EVENTS = "microflowEvents";
   private Boolean microflowEvents = false;

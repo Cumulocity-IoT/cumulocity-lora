@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
     DeviceProfilesBriefsInnerVendor.JSON_PROPERTY_NAME, DeviceProfilesBriefsInnerVendor.JSON_PROPERTY_COMMERCIAL_NAME,
     DeviceProfilesBriefsInnerVendor.JSON_PROPERTY_COMMERCIAL_DESCRIPTION })
 @JsonTypeName("DeviceProfiles_briefs_inner_vendor")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceProfilesBriefsInnerVendor {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

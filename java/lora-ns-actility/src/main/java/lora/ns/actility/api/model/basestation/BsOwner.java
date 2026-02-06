@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ BsOwner.JSON_PROPERTY_I_D, BsOwner.JSON_PROPERTY_ACCESS_RIGHT, BsOwner.JSON_PROPERTY_NAME })
 @JsonTypeName("Bs_owner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsOwner {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

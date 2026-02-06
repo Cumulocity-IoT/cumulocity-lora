@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ DeviceCellularHistoryMicroflowDaily.JSON_PROPERTY_VAL })
 @JsonTypeName("DeviceCellular_historyMicroflowDaily")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceCellularHistoryMicroflowDaily {
   public static final String JSON_PROPERTY_VAL = "val";
   private List<Integer> val = new ArrayList<>();

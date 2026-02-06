@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * DeviceProfiles
  */
 @JsonPropertyOrder({ DeviceProfiles.JSON_PROPERTY_BRIEFS, DeviceProfiles.JSON_PROPERTY_MORE })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceProfiles {
   public static final String JSON_PROPERTY_BRIEFS = "briefs";
   private List<DeviceProfilesBriefsInner> briefs = new ArrayList<>();

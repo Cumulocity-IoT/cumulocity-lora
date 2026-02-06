@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @JsonPropertyOrder({ TpxIotFlow.JSON_PROPERTY_CONNECTION_ID, TpxIotFlow.JSON_PROPERTY_STATE,
     TpxIotFlow.JSON_PROPERTY_CONNECTOR_ID, TpxIotFlow.JSON_PROPERTY_FLOW_ID })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:48:00.371272895+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:48:00.371272895+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class TpxIotFlow {
   public static final String JSON_PROPERTY_CONNECTION_ID = "connectionId";
   private String connectionId;

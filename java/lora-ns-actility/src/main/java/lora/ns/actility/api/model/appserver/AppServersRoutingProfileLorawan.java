@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @JsonPropertyOrder({ AppServersRoutingProfileLorawan.JSON_PROPERTY_TYPE,
     AppServersRoutingProfileLorawan.JSON_PROPERTY_SUPPLIER_APP_SERVERS })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T00:40:33.291304975+02:00[Europe/Paris]", comments = "Generator version: 7.5.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T00:40:33.291304975+02:00[Europe/Paris]", comments = "Generator version: 7.5.0")
 public class AppServersRoutingProfileLorawan {
   /**
    * AS routing profile type (&#x60;LORAWAN&#x60; or &#x60;CELLULAR&#x60;)

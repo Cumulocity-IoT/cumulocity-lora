@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     DeviceProfilesBriefsInner.JSON_PROPERTY_VENDOR, DeviceProfilesBriefsInner.JSON_PROPERTY_DEFAULT_ISM_BANDS,
     DeviceProfilesBriefsInner.JSON_PROPERTY_MOTION_MODEL_INDICATOR })
 @JsonTypeName("DeviceProfiles_briefs_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:51:09.923129109+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceProfilesBriefsInner {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

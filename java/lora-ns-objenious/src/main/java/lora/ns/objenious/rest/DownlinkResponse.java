@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * DownlinkResponse
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DownlinkResponse   {
   @JsonProperty("command_id")

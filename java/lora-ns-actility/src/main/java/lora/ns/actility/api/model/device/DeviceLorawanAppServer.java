@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({ DeviceLorawanAppServer.JSON_PROPERTY_I_D, DeviceLorawanAppServer.JSON_PROPERTY_HREF,
     DeviceLorawanAppServer.JSON_PROPERTY_NAME })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceLorawanAppServer {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

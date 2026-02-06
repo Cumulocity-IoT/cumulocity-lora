@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
     AppServersRoutingProfileCellularGtpTunnel.JSON_PROPERTY_DNS1,
     AppServersRoutingProfileCellularGtpTunnel.JSON_PROPERTY_DNS2 })
 @JsonTypeName("AppServersRoutingProfileCellular_gtpTunnel")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServersRoutingProfileCellularGtpTunnel {
   public static final String JSON_PROPERTY_SUBNET = "subnet";
   private String subnet = "10.20.0.0/16";

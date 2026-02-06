@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ BssDomains.JSON_PROPERTY_ADDED_DOMAINS, BssDomains.JSON_PROPERTY_REMOVED_DOMAINS,
     BssDomains.JSON_PROPERTY_LR_R_I_DS })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BssDomains {
   public static final String JSON_PROPERTY_ADDED_DOMAINS = "addedDomains";
   private List<BssDomainsAddedDomainsInner> addedDomains = new ArrayList<>();

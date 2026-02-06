@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
  * User defined device profile properties. Additional key/value pairs can be present, based on device profile configuration. Key and values will be strings. 
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-13T14:17:01.165Z")
 
 public class CustomFields extends HashMap<String, String>  {
 

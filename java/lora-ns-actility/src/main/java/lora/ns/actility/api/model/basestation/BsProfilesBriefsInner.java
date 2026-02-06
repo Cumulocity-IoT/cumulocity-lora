@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
     BsProfilesBriefsInner.JSON_PROPERTY_VENDOR, BsProfilesBriefsInner.JSON_PROPERTY_DEFAULT_ISM_BANDS,
     BsProfilesBriefsInner.JSON_PROPERTY_RF_HARDWARE_CONFIG, BsProfilesBriefsInner.JSON_PROPERTY_SOFTWARE_TYPE })
 @JsonTypeName("BsProfiles_briefs_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsProfilesBriefsInner {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ DomainGroup.JSON_PROPERTY_NAME })
 @JsonTypeName("Domain_group")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:33:06.356743432+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:33:06.356743432+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DomainGroup {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;

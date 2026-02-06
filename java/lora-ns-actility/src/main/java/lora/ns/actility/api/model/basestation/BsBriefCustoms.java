@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 @JsonPropertyOrder({ BsBriefCustoms.JSON_PROPERTY_VERSION })
 @JsonTypeName("BsBrief_customs")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsBriefCustoms {
   public static final String JSON_PROPERTY_VERSION = "version";
   private List<String> version = new ArrayList<>();

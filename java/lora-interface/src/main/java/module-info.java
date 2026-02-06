@@ -1,13 +1,9 @@
 module lora_interface {
-    // both modules will be replaced in 10.15 by requires transitive
-    // java.client.model;
-    requires transitive rest.representation;
-    requires transitive core.model;
+    requires transitive java.client.model;
 
     requires transitive org.joda.time;
     requires transitive device.capability.model;
     requires transitive org.slf4j;
-    requires transitive svenson;
     requires transitive java.client;
     requires transitive com.fasterxml.jackson.core;
     requires transitive com.fasterxml.jackson.databind;

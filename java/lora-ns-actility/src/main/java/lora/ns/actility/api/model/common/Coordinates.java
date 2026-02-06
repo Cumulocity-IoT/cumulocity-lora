@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * Geographical coordinates
  */
 @JsonPropertyOrder({ Coordinates.JSON_PROPERTY_LAT, Coordinates.JSON_PROPERTY_LNG })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T22:23:57.813651038+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T22:23:57.813651038+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class Coordinates {
   public static final String JSON_PROPERTY_LAT = "lat";
   private BigDecimal lat;

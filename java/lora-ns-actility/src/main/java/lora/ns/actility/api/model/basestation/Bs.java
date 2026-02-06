@@ -52,7 +52,7 @@ import lora.ns.actility.api.model.common.OccContext;
     Bs.JSON_PROPERTY_RFCELL_STATE, Bs.JSON_PROPERTY_SMN, Bs.JSON_PROPERTY_STATE, Bs.JSON_PROPERTY_STATE_SINCE,
     Bs.JSON_PROPERTY_STATIC_ADDRESS, Bs.JSON_PROPERTY_TEMP, Bs.JSON_PROPERTY_TIME_SYNC, Bs.JSON_PROPERTY_UP_FRAME,
     Bs.JSON_PROPERTY_UPGRADE_POLICY, Bs.JSON_PROPERTY_VENDOR, Bs.JSON_PROPERTY_VERSION, Bs.JSON_PROPERTY_WAN_CONFIG })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T23:21:27.417438237+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T23:21:27.417438237+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class Bs {
   public static final String JSON_PROPERTY_ACTIVATE_BEACON_TRANSMISSION = "activateBeaconTransmission";
   private Boolean activateBeaconTransmission;

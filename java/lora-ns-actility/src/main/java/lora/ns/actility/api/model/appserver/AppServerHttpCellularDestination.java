@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({ AppServerHttpCellularDestination.JSON_PROPERTY_ADDRESSES,
     AppServerHttpCellularDestination.JSON_PROPERTY_STRATEGY })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServerHttpCellularDestination {
   public static final String JSON_PROPERTY_ADDRESSES = "addresses";
   private List<String> addresses = new ArrayList<>();

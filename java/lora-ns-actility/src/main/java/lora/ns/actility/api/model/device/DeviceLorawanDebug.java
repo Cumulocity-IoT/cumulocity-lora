@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ DeviceLorawanDebug.JSON_PROPERTY_ALLOWED, DeviceLorawanDebug.JSON_PROPERTY_LORAWAN,
     DeviceLorawanDebug.JSON_PROPERTY_LORAWAN_SINCE, DeviceLorawanDebug.JSON_PROPERTY_NW_GEOLOC })
 @JsonTypeName("DeviceLorawan_debug")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T01:47:08.521515962+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class DeviceLorawanDebug {
   public static final String JSON_PROPERTY_ALLOWED = "allowed";
   private Boolean allowed;

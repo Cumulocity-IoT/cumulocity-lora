@@ -28,7 +28,7 @@ import lora.ns.actility.api.model.common.IsmBandName;
 @JsonPropertyOrder({ BsProfilesBriefsInnerDefaultIsmBandsInner.JSON_PROPERTY_I_D,
     BsProfilesBriefsInnerDefaultIsmBandsInner.JSON_PROPERTY_NAME })
 @JsonTypeName("BsProfiles_briefs_inner_defaultIsmBands_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsProfilesBriefsInnerDefaultIsmBandsInner {
   public static final String JSON_PROPERTY_I_D = "ID";
   private IsmBandID ID;

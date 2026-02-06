@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     AppServerIotFlowConnectorMetrics.JSON_PROPERTY_UPLINKS_LAST1H_FAILED,
     AppServerIotFlowConnectorMetrics.JSON_PROPERTY_UPLINKS_LAST24H,
     AppServerIotFlowConnectorMetrics.JSON_PROPERTY_UPLINKS_LAST24H_FAILED })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServerIotFlowConnectorMetrics {
   public static final String JSON_PROPERTY_ACTIVE_THINGS_LAST1H = "activeThingsLast1h";
   private Long activeThingsLast1h;

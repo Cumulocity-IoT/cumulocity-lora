@@ -44,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsLogicalChannels.JSON_PROPERTY_UP_DOWN, BsLogicalChannels.JSON_PROPERTY_DOWN_ASYM,
     BsLogicalChannels.JSON_PROPERTY_RX2 })
 @JsonTypeName("Bs_logicalChannels")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsLogicalChannels {
   public static final String JSON_PROPERTY_UP_DOWN = "upDown";
   private List<BsLogicalChannelsUpDownInner> upDown = new ArrayList<>();

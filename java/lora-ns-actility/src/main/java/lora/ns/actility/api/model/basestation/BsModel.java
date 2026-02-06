@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonPropertyOrder({ BsModel.JSON_PROPERTY_I_D, BsModel.JSON_PROPERTY_COMMERCIAL_NAME, BsModel.JSON_PROPERTY_ISM_BANDS,
     BsModel.JSON_PROPERTY_LOGO, BsModel.JSON_PROPERTY_RF_HARDWARE_CONFIG, BsModel.JSON_PROPERTY_SOFTWARE_TYPE })
 @JsonTypeName("Bs_model")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsModel {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

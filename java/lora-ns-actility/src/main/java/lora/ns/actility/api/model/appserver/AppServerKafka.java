@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({ AppServerKafka.JSON_PROPERTY_DESTINATIONS, AppServerKafka.JSON_PROPERTY_FLOW_MATCHER_TAGS,
     AppServerKafka.JSON_PROPERTY_NOTIFICATION, AppServerKafka.JSON_PROPERTY_TPX_IOT_FLOW })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServerKafka {
   public static final String JSON_PROPERTY_DESTINATIONS = "destinations";
   private List<AppServerKafkaDestination> destinations = new ArrayList<>();

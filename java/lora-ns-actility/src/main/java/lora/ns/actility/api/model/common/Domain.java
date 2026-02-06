@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * &#x60;ACTIVE&#x60; state to be used.
  */
 @JsonPropertyOrder({ Domain.JSON_PROPERTY_NAME, Domain.JSON_PROPERTY_GROUP })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:33:06.356743432+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:33:06.356743432+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class Domain {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;

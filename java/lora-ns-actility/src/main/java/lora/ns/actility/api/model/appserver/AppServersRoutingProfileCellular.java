@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     AppServersRoutingProfileCellular.JSON_PROPERTY_GRE_TUNNELS,
     AppServersRoutingProfileCellular.JSON_PROPERTY_MESSAGE_ROUTING,
     AppServersRoutingProfileCellular.JSON_PROPERTY_APP_SERVERS_REPORTING })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServersRoutingProfileCellular {
   /**
    * AS routing profile type (&#x60;LORAWAN&#x60; or &#x60;CELLULAR&#x60;)

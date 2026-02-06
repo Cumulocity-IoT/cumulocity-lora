@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
     AppServersRoutingProfileLorawanSupplierAppServersInner.JSON_PROPERTY_HREF,
     AppServersRoutingProfileLorawanSupplierAppServersInner.JSON_PROPERTY_SUPLIER_I_D })
 @JsonTypeName("AppServersRoutingProfileLorawan_supplierAppServers_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T11:38:36.048437806+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class AppServersRoutingProfileLorawanSupplierAppServersInner {
   public static final String JSON_PROPERTY_I_D = "ID";
   private String ID;

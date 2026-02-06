@@ -5,7 +5,7 @@ module lora.ns.ms {
     requires transitive spring.security.config;
     requires transitive spring.security.web;
     requires transitive thymeleaf;
-    requires transitive thymeleaf.spring5;
+    requires transitive thymeleaf.spring6;
     requires org.apache.tomcat.embed.core;
     requires feign.core;
 

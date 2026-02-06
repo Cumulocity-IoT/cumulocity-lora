@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsDwFrameMinRC.JSON_PROPERTY_ANT, BsDwFrameMinRC.JSON_PROPERTY_DC, BsDwFrameMinRC.JSON_PROPERTY_LC,
     BsDwFrameMinRC.JSON_PROPERTY_RC })
 @JsonTypeName("Bs_dwFrame_minRC")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsDwFrameMinRC {
   public static final String JSON_PROPERTY_ANT = "ant";
   private String ant;

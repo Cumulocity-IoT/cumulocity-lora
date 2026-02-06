@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsBriefUpFrame.JSON_PROPERTY_HISTORY, BsBriefUpFrame.JSON_PROPERTY_LAST,
     BsBriefUpFrame.JSON_PROPERTY_MIN_R_C })
 @JsonTypeName("BsBrief_upFrame")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsBriefUpFrame {
   public static final String JSON_PROPERTY_HISTORY = "history";
   private BsUpFrameHistory history;

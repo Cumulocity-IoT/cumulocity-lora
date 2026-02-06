@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({ BsBackup.JSON_PROPERTY_DATE, BsBackup.JSON_PROPERTY_STATUS, BsBackup.JSON_PROPERTY_STATUS_INFO,
     BsBackup.JSON_PROPERTY_VERSION })
 @JsonTypeName("Bs_backup")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T16:08:44.630492043+02:00[Europe/Paris]", comments = "Generator version: 7.6.0")
 public class BsBackup {
   public static final String JSON_PROPERTY_DATE = "date";
   private Long date;
