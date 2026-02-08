@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>c8y.agents.lpwan.backend</groupId>
 			<artifactId>lpwan-backend</artifactId>
-			<version>1009.6.0</version>
+			<version>${c8y.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.softwareag</groupId>

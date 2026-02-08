@@ -9,6 +9,7 @@ import com.cumulocity.lpwan.payload.service.PayloadMappingService;
 import com.cumulocity.lpwan.payload.uplink.model.MessageIdConfiguration;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
+import com.cumulocity.sdk.client.identity.IdentityApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 import com.cumulocity.sdk.client.measurement.MeasurementApi;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,9 +41,9 @@ public class ServiceConfiguration {
 	}
 
 	@Bean
-	public DeviceTypePayloadConfigurer deviceTypePayloadConfigurer(InventoryApi inventoryApi,
-			DeviceTypeMapper deviceTypeMapper) {
-		return new DeviceTypePayloadConfigurer(inventoryApi, deviceTypeMapper);
+	public DeviceTypePayloadConfigurer deviceTypePayloadConfigurer(IdentityApi identityApi,
+			InventoryApi inventoryApi, DeviceTypeMapper deviceTypeMapper) {
+		return new DeviceTypePayloadConfigurer(identityApi, inventoryApi, deviceTypeMapper);
 	}
 
 	@Bean
