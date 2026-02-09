@@ -44,6 +44,12 @@ public class AgentService {
 
 	private final Map<String, ManagedObjectRepresentation> agents = new HashMap<>();
 
+	@lombok.Getter
+	private Integer gatewayScanRate = 300000;
+
+	@lombok.Getter
+	private Integer gatewayScanStartDelay = 10000;
+
 	public void registerAgent(LNSIntegrationService<? extends LNSConnector> lnsIntegrationService) {
 		Optional<ExternalIDRepresentation> extId = c8yUtils.findExternalId(lnsIntegrationService.getType(),
 						LNSIntegrationService.LNS_EXT_ID);
@@ -79,12 +85,10 @@ public class AgentService {
 			}
 			inventoryApi.update(agent);
 			if (agent.hasProperty(GATEWAY_SCAN_RATE)) {
-				lnsIntegrationService
-								.setGatewayScanRate(Integer.valueOf(agent.getProperty(GATEWAY_SCAN_RATE).toString()));
+				this.gatewayScanRate = Integer.valueOf(agent.getProperty(GATEWAY_SCAN_RATE).toString());
 			}
 			if (agent.hasProperty(GATEWAY_SCAN_START_DELAY)) {
-				lnsIntegrationService.setGatewayScanStartDelay(
-								Integer.valueOf(agent.getProperty(GATEWAY_SCAN_START_DELAY).toString()));
+				this.gatewayScanStartDelay = Integer.valueOf(agent.getProperty(GATEWAY_SCAN_START_DELAY).toString());
 			}
 		}
 		agents.put(subscriptionsService.getTenant(), agent);
@@ -104,6 +108,7 @@ public class AgentService {
 	}
 
 	public void setGatewayScanRate(Integer gatewayScanRate) {
+		this.gatewayScanRate = gatewayScanRate;
 		ManagedObjectRepresentation agent = new ManagedObjectRepresentation();
 		agent.setId(getAgent().getId());
 		agent.setProperty(GATEWAY_SCAN_RATE, gatewayScanRate);
@@ -111,6 +116,7 @@ public class AgentService {
 	}
 
 	public void setGatewayScanStartDelay(Integer gatewayScanStartDelay) {
+		this.gatewayScanStartDelay = gatewayScanStartDelay;
 		ManagedObjectRepresentation agent = new ManagedObjectRepresentation();
 		agent.setId(getAgent().getId());
 		agent.setProperty(GATEWAY_SCAN_START_DELAY, gatewayScanStartDelay);

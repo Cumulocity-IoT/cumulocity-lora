@@ -30,34 +30,14 @@ import lora.ns.operation.OperationData;
 public class ChirpstackIntegrationService extends LNSIntegrationService<ChirpstackConnector> {
 
 	public ChirpstackIntegrationService() {
-		wizard.add(new LNSConnectorWizardStep() {
-			private final List<PropertyDescription> propertyDescriptions = List.of(
-					PropertyDescription.text("address", "Address (IP or server address)", true),
-					PropertyDescription.integer("port", "Port", true),
-					PropertyDescription.bool("ssl", "Use SSL"),
-					PropertyDescription.text("apikey", "Tenant API Key", true),
-					PropertyDescription.text("tenantid", "Tenant Id", true));
-
-			public String getName() {
-				return "step1";
-			}
-
-			public List<PropertyDescription> getPropertyDescriptions() {
-				return propertyDescriptions;
-			}
-		});
-		wizard.add(new LNSConnectorWizardStep() {
-			private final List<PropertyDescription> propertyDescriptions = List.of(
-					PropertyDescription.list("application", "Application", "/applications", true));
-
-			public String getName() {
-				return "step2";
-			}
-
-			public List<PropertyDescription> getPropertyDescriptions() {
-				return propertyDescriptions;
-			}
-		});
+		wizard.add(LNSConnectorWizardStep.of("step1",
+				PropertyDescription.text("address", "Address (IP or server address)", true),
+				PropertyDescription.integer("port", "Port", true),
+				PropertyDescription.bool("ssl", "Use SSL"),
+				PropertyDescription.text("apikey", "Tenant API Key", true),
+				PropertyDescription.text("tenantid", "Tenant Id", true)));
+		wizard.add(LNSConnectorWizardStep.of("step2",
+				PropertyDescription.list("application", "Application", "/applications", true)));
 		deviceProvisioningAdditionalProperties
 				.add(PropertyDescription.list("deviceprofile", "Device Profile", "/deviceprofiles", true));
 	}

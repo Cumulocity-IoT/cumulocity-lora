@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 
 import lora.common.JsonUtils;
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
-import lora.ns.connector.PropertyDescription.PropertyType;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -31,21 +31,23 @@ public class ObjeniousIntegrationService extends LNSIntegrationService<Objenious
 	private final Logger logger = LoggerFactory.getLogger(ObjeniousIntegrationService.class);
 	
 	{
-		wizard.add(new ConnectorWizardStep1());
-		wizard.add(new ConnectorWizardStep2());
-		deviceProvisioningAdditionalProperties.add(new PropertyDescription("deviceProfile", "Device profile", true, null, "/deviceProfiles", null, null, null, null, null, PropertyType.LIST, false));
+		wizard.add(LNSConnectorWizardStep.of("Initial step",
+				PropertyDescription.text("apikey", "API Key", true).withEncrypted(true)));
+		wizard.add(LNSConnectorWizardStep.of("Select a group",
+				PropertyDescription.list("groupId", "Group", "/groups", true)));
+		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("deviceProfile", "Device profile", "/deviceProfiles", true));
 		payloadSimulationFields.add(PropertyDescription.text("deveui", "Device EUI", true).withPattern("[a-fA-F0-9]{16}"));
 		payloadSimulationFields.add(PropertyDescription.text("name", "Device name", true));
 		payloadSimulationFields.add(PropertyDescription.integer("port", "Port", true));
-		payloadSimulationFields.add(new PropertyDescription("rssi", "RSSI", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("snr", "SNR", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("noise", "Noise", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("signal", "Signal", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("sf", "SF", true, null, null, null, null, null, null, null, PropertyType.INTEGER, false));
-		payloadSimulationFields.add(new PropertyDescription("lat", "Latitude", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("lng", "Longitude", true, null, null, null, null, null, null, null, PropertyType.NUMBER, false));
-		payloadSimulationFields.add(new PropertyDescription("payload", "Payload", true, null, null, null, null, null, null, null, PropertyType.TEXT, false));
-		payloadSimulationFields.add(new PropertyDescription("timestamp", "Timestamp", true, null, null, null, null, null, null, null, PropertyType.DATETIME, false));
+		payloadSimulationFields.add(PropertyDescription.number("rssi", "RSSI", true));
+		payloadSimulationFields.add(PropertyDescription.number("snr", "SNR", true));
+		payloadSimulationFields.add(PropertyDescription.number("noise", "Noise", true));
+		payloadSimulationFields.add(PropertyDescription.number("signal", "Signal", true));
+		payloadSimulationFields.add(PropertyDescription.integer("sf", "SF", true));
+		payloadSimulationFields.add(PropertyDescription.number("lat", "Latitude", true));
+		payloadSimulationFields.add(PropertyDescription.number("lng", "Longitude", true));
+		payloadSimulationFields.add(PropertyDescription.text("payload", "Payload", true));
+		payloadSimulationFields.add(PropertyDescription.datetime("timestamp", "Timestamp", true));
 	}
 
 	@Override

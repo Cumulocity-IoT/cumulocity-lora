@@ -21,8 +21,8 @@ import com.google.common.io.BaseEncoding;
 
 import lora.common.JsonUtils;
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
-import lora.ns.connector.PropertyDescription.PropertyType;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -32,15 +32,18 @@ public class ActilityIntegrationService extends LNSIntegrationService<ActilityCo
 	private final Logger logger = LoggerFactory.getLogger(ActilityIntegrationService.class);
 
 	public ActilityIntegrationService() {
-		wizard.add(new ConnectorWizardStep1());
-		deviceProvisioningAdditionalProperties.add(new PropertyDescription("deviceProfile", "Device profile", true,
-						null, "/deviceProfiles", null, null, null, null, null, PropertyType.LIST, false));
-		gatewayProvisioningAdditionalProperties.add(new PropertyDescription("SMN", "Serial Marketing Number", false,
-						null, null, null, null, null, null, null, PropertyType.TEXT, false));
-		gatewayProvisioningAdditionalProperties.add(new PropertyDescription("publicKey", "Public key", false, null,
-						null, null, null, null, null, null, PropertyType.TEXT, true));
-		gatewayProvisioningAdditionalProperties.add(new PropertyDescription("gatewayProfile", "Gateway profile", true,
-						null, "/baseStationProfiles", null, null, null, null, null, PropertyType.LIST, false));
+		wizard.add(LNSConnectorWizardStep.of("Initial step",
+				PropertyDescription.text("url", "URL", true),
+				PropertyDescription.text("username", "Username", true),
+				PropertyDescription.password("password", "Password"),
+				PropertyDescription.text("domain", "Domain", false),
+				PropertyDescription.text("group", "Group", false),
+				PropertyDescription.text("webhook-url", "Webhook URL", false),
+				PropertyDescription.bool("disableSslValidation", "Disable SSL Validation (dev/test only)")));
+		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("deviceProfile", "Device profile", "/deviceProfiles", true));
+		gatewayProvisioningAdditionalProperties.add(PropertyDescription.text("SMN", "Serial Marketing Number", false));
+		gatewayProvisioningAdditionalProperties.add(PropertyDescription.text("publicKey", "Public key", false).withEncrypted(true));
+		gatewayProvisioningAdditionalProperties.add(PropertyDescription.list("gatewayProfile", "Gateway profile", "/baseStationProfiles", true));
 	}
 
 	@Override

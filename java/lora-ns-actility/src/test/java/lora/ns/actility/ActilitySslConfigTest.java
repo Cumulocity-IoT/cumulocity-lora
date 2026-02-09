@@ -7,17 +7,19 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
 
 /**
- * Tests for Actility SSL validation configurability (Step 1d).
+ * Tests for Actility SSL validation configurability.
  * Verifies that the disableSslValidation property is exposed in the wizard.
  */
 class ActilitySslConfigTest {
 
 	@Test
 	void wizardStep1_shouldIncludeSslValidationProperty() {
-		ConnectorWizardStep1 step = new ConnectorWizardStep1();
+		ActilityIntegrationService service = new ActilityIntegrationService();
+		LNSConnectorWizardStep step = service.getInstanceWizard().get(0);
 		List<PropertyDescription> props = step.getPropertyDescriptions();
 		boolean hasSslProp = props.stream()
 				.anyMatch(p -> "disableSslValidation".equals(p.getName()));
@@ -26,7 +28,8 @@ class ActilitySslConfigTest {
 
 	@Test
 	void wizardStep1_shouldHaveCorrectPropertyCount() {
-		ConnectorWizardStep1 step = new ConnectorWizardStep1();
+		ActilityIntegrationService service = new ActilityIntegrationService();
+		LNSConnectorWizardStep step = service.getInstanceWizard().get(0);
 		// url, username, password, domain, group, webhook-url, disableSslValidation
 		assertFalse(step.getPropertyDescriptions().isEmpty());
 	}

@@ -53,4 +53,8 @@ public class PropertyDescription {
 	public static PropertyDescription bool(String name, String label) {
 		return new PropertyDescription().withName(name).withLabel(label).withType(PropertyType.BOOLEAN).withRequired(false);
 	}
+
+	public static PropertyDescription datetime(String name, String label, boolean required) {
+		return new PropertyDescription().withName(name).withLabel(label).withType(PropertyType.DATETIME).withRequired(required);
+	}
 }

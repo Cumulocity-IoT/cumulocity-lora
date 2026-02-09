@@ -23,7 +23,6 @@ import lora.common.JsonUtils;
 import lora.ns.DeviceData;
 import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
-import lora.ns.connector.PropertyDescription.PropertyType;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -33,36 +32,12 @@ public class KerlinkIntegrationService extends LNSIntegrationService<KerlinkConn
 	private final Logger logger = LoggerFactory.getLogger(KerlinkIntegrationService.class);
 	
 	{
-		wizard.add(new LNSConnectorWizardStep() {
-			final private List<PropertyDescription> propertyDescriptions = List.of(
-					new PropertyDescription("baseUrl", "URL", true, "https://<your wanesy instance>.wanesy.com/gms/application", null, null, null, null, null, null, PropertyType.TEXT, true),
-					new PropertyDescription("username", "Username", true, null, null, null, null, null, null, null, PropertyType.TEXT, true),
-					new PropertyDescription("password", "Password", true, null, null, null, null, null, null, null, PropertyType.PASSWORD, true));
-
-			@Override
-			public String getName() {
-				return "Configure LNS access";
-			}
-
-			@Override
-			public List<PropertyDescription> getPropertyDescriptions() {
-				return propertyDescriptions;
-			}
-		});
-		wizard.add(new LNSConnectorWizardStep() {
-			final private List<PropertyDescription> propertyDescriptions = List.of(
-					new PropertyDescription("clusterId", "Cluster", true, null, "/clusters", null, null, null, null, null, PropertyType.LIST, false));
-
-			@Override
-			public String getName() {
-				return "Select a cluster";
-			}
-
-			@Override
-			public List<PropertyDescription> getPropertyDescriptions() {
-				return propertyDescriptions;
-			}
-		});
+		wizard.add(LNSConnectorWizardStep.of("Configure LNS access",
+				PropertyDescription.text("baseUrl", "URL", true).withDefaultValue("https://<your wanesy instance>.wanesy.com/gms/application").withEncrypted(true),
+				PropertyDescription.text("username", "Username", true).withEncrypted(true),
+				PropertyDescription.password("password", "Password")));
+		wizard.add(LNSConnectorWizardStep.of("Select a cluster",
+				PropertyDescription.list("clusterId", "Cluster", "/clusters", true)));
 	}
 
 	private Map<String, OperationStatus> statusMap = new HashMap<>();

@@ -116,6 +116,33 @@ public class LNSOperationService {
 		storeOperationOnMO(lnsConnectorId, c8yOperation, commandId);
 	}
 
+	public void updateOperationStatus(String lnsInstanceId, OperationData data) {
+		if (data.getStatus() != OperationStatus.FAILED) {
+			OperationRepresentation operation = retrieveOperation(lnsInstanceId, data.getCommandId());
+			if (operation != null) {
+				operation.setStatus(data.getStatus().toString());
+				deviceControlApi.update(operation);
+				if (data.getStatus() == OperationStatus.SUCCESSFUL) {
+					removeOperation(lnsInstanceId, data.getCommandId());
+				}
+			} else {
+				loraContextService.log("Unknown operation {} from LNS", data.getCommandId());
+			}
+		} else {
+			if (data.getCommandId() != null) {
+				OperationRepresentation operation = retrieveOperation(lnsInstanceId, data.getCommandId());
+				if (operation != null) {
+					operation.setStatus(OperationStatus.FAILED.toString());
+					operation.setFailureReason(data.getErrorMessage());
+					deviceControlApi.update(operation);
+					removeOperation(lnsInstanceId, data.getCommandId());
+				}
+			} else {
+				loraContextService.log("Unknown operation");
+			}
+		}
+	}
+
 	public OperationRepresentation retrieveOperation(String lnsConnectorId, String commandId) {
 		OperationRepresentation result = operations.containsKey(subscriptionsService.getTenant())
 				&& operations.get(subscriptionsService.getTenant()).containsKey(lnsConnectorId)

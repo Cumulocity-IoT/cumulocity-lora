@@ -30,23 +30,9 @@ import lora.ns.operation.OperationData;
 public class NetmoreIntegrationService extends LNSIntegrationService<NetmoreConnector> {
 
     {
-        wizard.add(new LNSConnectorWizardStep() {
-
-            private final List<PropertyDescription> propertyDescriptions = List.of(
+        wizard.add(LNSConnectorWizardStep.of("step 1",
                 PropertyDescription.password("apiKey", "API Key"),
-                PropertyDescription.text("customerId", "Customer ID", true)
-            );
-    
-            @Override
-            public String getName() {
-                return "step 1";
-            }
-
-            @Override
-            public List<PropertyDescription> getPropertyDescriptions() {
-                return propertyDescriptions;
-            }
-        });
+                PropertyDescription.text("customerId", "Customer ID", true)));
 
         deviceProvisioningAdditionalProperties.add(PropertyDescription.list("deviceGroupId", "Device Group", "/deviceGroups", true));
         gatewayProvisioningAdditionalProperties.add(PropertyDescription.list("gatewayGroupId", "Gateway Group", "/gatewayGroups", true));

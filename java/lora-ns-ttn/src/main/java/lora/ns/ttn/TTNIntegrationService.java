@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
-import lora.ns.connector.PropertyDescription.PropertyType;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -20,19 +20,18 @@ public class TTNIntegrationService extends LNSIntegrationService<TTNConnector> {
 	private TTNUplinkProcessor uplinkProcessor;
 
 	{
-		wizard.add(new InstanceWizardStep1());
-		wizard.add(new InstanceWizardStep2());
-		deviceProvisioningAdditionalProperties.add(new PropertyDescription("MACVersion", "MAC Version", true, null,
-				"/macversion", null, null, null, null, null, PropertyType.LIST, false));
-		deviceProvisioningAdditionalProperties.add(new PropertyDescription("PHYVersion", "PHY Version", true, null,
-				"/phyversion", null, null, null, null, null, PropertyType.LIST, false));
-		deviceProvisioningAdditionalProperties.add(new PropertyDescription("frequencyPlan", "Frequency Plan", true,
-				null, "/frequencyplan", null, null, null, null, null, PropertyType.LIST, false));
+		wizard.add(LNSConnectorWizardStep.of("Initial step",
+				PropertyDescription.text("address", "Address", true),
+				PropertyDescription.text("apikey", "API Key", true).withEncrypted(true),
+				PropertyDescription.bool("mqtt", "MQTT").withRequired(true)));
+		wizard.add(LNSConnectorWizardStep.of("Application selection",
+				PropertyDescription.list("appid", "Application", "/apps", true)));
+		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("MACVersion", "MAC Version", "/macversion", true));
+		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("PHYVersion", "PHY Version", "/phyversion", true));
+		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("frequencyPlan", "Frequency Plan", "/frequencyplan", true));
 
-		gatewayProvisioningAdditionalProperties.add(new PropertyDescription("public", "Make status public", true, null,
-				null, null, null, null, null, null, PropertyType.BOOLEAN, false));
-		gatewayProvisioningAdditionalProperties.add(new PropertyDescription("frequencyPlan", "Frequency Plan", true,
-				null, "/frequencyplan", null, null, null, null, null, PropertyType.LIST, false));
+		gatewayProvisioningAdditionalProperties.add(PropertyDescription.bool("public", "Make status public").withRequired(true));
+		gatewayProvisioningAdditionalProperties.add(PropertyDescription.list("frequencyPlan", "Frequency Plan", "/frequencyplan", true));
 	}
 
 	@Override

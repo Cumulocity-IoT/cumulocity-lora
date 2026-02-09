@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import lora.common.JsonUtils;
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
+import lora.ns.connector.PropertyDescription;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -29,7 +31,9 @@ public class OrbiwiseIntegrationService extends LNSIntegrationService<OrbiwiseCo
 	private final Logger logger = LoggerFactory.getLogger(OrbiwiseIntegrationService.class);
 	
 	{
-		wizard.add(new InstanceWizardStep1());
+		wizard.add(LNSConnectorWizardStep.of("Initial step",
+				PropertyDescription.text("username", "Username", true),
+				PropertyDescription.password("password", "Password")));
 	}
 
 	@Override

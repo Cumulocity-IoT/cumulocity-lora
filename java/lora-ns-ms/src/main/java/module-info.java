@@ -15,4 +15,5 @@ module lora.ns.ms {
     exports lora.ns.device;
     exports lora.ns.gateway;
     exports lora.ns.operation;
+    exports lora.ns.scheduling;
 }

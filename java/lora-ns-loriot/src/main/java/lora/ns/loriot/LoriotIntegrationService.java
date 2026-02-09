@@ -21,6 +21,8 @@ import com.google.common.io.BaseEncoding;
 
 import lora.common.JsonUtils;
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
+import lora.ns.connector.PropertyDescription;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
 
@@ -30,8 +32,12 @@ public class LoriotIntegrationService extends LNSIntegrationService<LoriotConnec
 	private final Logger logger = LoggerFactory.getLogger(LoriotIntegrationService.class);
 
 	public LoriotIntegrationService() {
-		wizard.add(new ConnectorWizardStep1());
-		wizard.add(new ConnectorWizardStep2());
+		wizard.add(LNSConnectorWizardStep.of("Initial step",
+				PropertyDescription.text("url", "URL", true).withEncrypted(true),
+				PropertyDescription.text("user", "Username", true).withEncrypted(true),
+				PropertyDescription.password("pwd", "Password")));
+		wizard.add(LNSConnectorWizardStep.of("Select an app",
+				PropertyDescription.list("appid", "Application", "/apps", true)));
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import com.google.common.io.BaseEncoding;
 
 import lora.common.JsonUtils;
 import lora.ns.DeviceData;
+import lora.ns.connector.LNSConnectorWizardStep;
 import lora.ns.connector.PropertyDescription;
 import lora.ns.integration.LNSIntegrationService;
 import lora.ns.operation.OperationData;
@@ -27,8 +28,10 @@ import lora.ns.operation.OperationData;
 @Service
 public class LiveObjectsIntegrationService extends LNSIntegrationService<LiveObjectsConnector> {
 	public LiveObjectsIntegrationService() {
-		wizard.add(new ConnectorWizardStep1());
-		wizard.add(new ConnectorWizardStep2());
+		wizard.add(LNSConnectorWizardStep.of("step1",
+				PropertyDescription.text("apikey", "API Key", true).withEncrypted(true)));
+		wizard.add(LNSConnectorWizardStep.of("step2",
+				PropertyDescription.list("groupId", "Group", "/groups", true)));
 		deviceProvisioningAdditionalProperties.add(
 						PropertyDescription.list("connectivityPlan", "Connectivity Plan", "/connectivityPlans", true));
 		deviceProvisioningAdditionalProperties.add(PropertyDescription.list("profile", "Profile", "/profiles", true));
